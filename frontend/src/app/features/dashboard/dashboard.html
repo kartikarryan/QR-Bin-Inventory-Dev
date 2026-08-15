@@ -1,0 +1,187 @@
+<div class="dashboard">
+  <div class="page-header">
+    <div>
+      <h1>Dashboard</h1>
+      <p class="subtitle">Overview of your workshop inventory</p>
+    </div>
+    <div class="header-meta">
+      @if (lastUpdated()) {
+        <span class="updated-at">Last updated: {{ formattedLastUpdated() }}</span>
+      }
+      <button
+        type="button"
+        class="refresh-btn"
+        [class.spinning]="refreshing()"
+        [disabled]="loading() || refreshing()"
+        (click)="refresh()"
+        aria-label="Refresh dashboard"
+        title="Refresh"
+      >
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12a9 9 0 1 1-2.64-6.36" />
+          <path d="M21 3v6h-6" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  @if (loading()) {
+    <section class="stat-grid">
+      <div class="stat-card">
+        <span class="skeleton skeleton-label"></span>
+        <span class="skeleton skeleton-value"></span>
+      </div>
+      <div class="stat-card">
+        <span class="skeleton skeleton-label"></span>
+        <span class="skeleton skeleton-value"></span>
+      </div>
+      <div class="stat-card">
+        <span class="skeleton skeleton-label"></span>
+        <span class="skeleton skeleton-value"></span>
+      </div>
+    </section>
+    <div class="panel">
+      <span class="skeleton skeleton-heading"></span>
+      <div class="skeleton skeleton-row"></div>
+      <div class="skeleton skeleton-row"></div>
+      <div class="skeleton skeleton-row"></div>
+    </div>
+  } @else if (errorMessage()) {
+    <p class="state-message error">{{ errorMessage() }}</p>
+  } @else if (summary(); as data) {
+    <section class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-card-top">
+          <span class="stat-label">Total Parts</span>
+          <span class="stat-icon neutral" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7" rx="1.5" />
+              <rect x="14" y="3" width="7" height="7" rx="1.5" />
+              <rect x="3" y="14" width="7" height="7" rx="1.5" />
+              <path d="M14 17h3m0 0h3m-3 0v-3m0 3v3" />
+            </svg>
+          </span>
+        </div>
+        <span class="stat-value">{{ data.totalParts }}</span>
+        <span class="stat-caption">All registered parts</span>
+      </div>
+
+      <div class="stat-card" [class.warning]="data.lowStockCount > 0">
+        <div class="stat-card-top">
+          <span class="stat-label">Low Stock</span>
+          <span class="stat-icon warning" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3 2 20h20L12 3Z" />
+              <line x1="12" y1="10" x2="12" y2="15" />
+              <circle cx="12" cy="18" r="0.5" fill="currentColor" />
+            </svg>
+          </span>
+        </div>
+        <span class="stat-value">{{ data.lowStockCount }}</span>
+        <span class="stat-caption">Parts below minimum</span>
+      </div>
+
+      <div class="stat-card" [class.danger]="data.outOfStockCount > 0">
+        <div class="stat-card-top">
+          <span class="stat-label">Out of Stock</span>
+          <span class="stat-icon danger" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9" />
+              <line x1="15" y1="9" x2="9" y2="15" />
+              <line x1="9" y1="9" x2="15" y2="15" />
+            </svg>
+          </span>
+        </div>
+        <span class="stat-value">{{ data.outOfStockCount }}</span>
+        <span class="stat-caption">No stock available</span>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-header">
+        <h2>Needs Attention</h2>
+        <p class="section-subtitle">Parts that are at or below their minimum stock level</p>
+      </div>
+
+      @if (needsAttention().length === 0) {
+        <div class="empty-state pattern-dots">
+          <span class="empty-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 6 9 17l-5-5" />
+            </svg>
+          </span>
+          <p class="empty-title">Everything is stocked</p>
+          <p class="empty-subtitle">No parts are currently below their minimum stock level.</p>
+        </div>
+      } @else {
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Part</th>
+                <th>Bin</th>
+                <th>Current Stock</th>
+                <th>Minimum</th>
+                <th>Status</th>
+                <th class="action-col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (part of needsAttention(); track part.id) {
+                <tr>
+                  <td>{{ part.partName }}</td>
+                  <td>
+                    @if (part.binCode) {
+                      <span class="bin-chip">{{ part.binCode }}</span>
+                    } @else {
+                      —
+                    }
+                  </td>
+                  <td class="stock-cell">
+                    <span class="stock-ratio">
+                      <strong [class]="statusClass(part.status)">{{ part.currentStock }}</strong>
+                      <span class="stock-ratio-muted">/ {{ part.minimumStock }}</span>
+                    </span>
+                    <span class="mini-bar" [class]="statusClass(part.status)">
+                      <span class="mini-bar-fill" [style.width.%]="stockBarPercent(part.currentStock, part.minimumStock)"></span>
+                    </span>
+                  </td>
+                  <td>{{ part.minimumStock }}</td>
+                  <td><span class="status-badge" [class]="statusClass(part.status)">● {{ part.status }}</span></td>
+                  <td class="action-col">
+                    <a class="view-link" [routerLink]="['/inventory', part.id]">View <span class="arrow">→</span></a>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card-list">
+          @for (part of needsAttention(); track part.id) {
+            <a class="attention-card" [routerLink]="['/inventory', part.id]">
+              <div class="attention-card-top">
+                <span class="part-name">{{ part.partName }}</span>
+                <span class="status-badge" [class]="statusClass(part.status)">● {{ part.status }}</span>
+              </div>
+              <div class="attention-card-meta">
+                @if (part.binCode) {
+                  <span class="bin-chip">{{ part.binCode }}</span>
+                }
+                <span class="stock-ratio">
+                  <strong [class]="statusClass(part.status)">{{ part.currentStock }}</strong>
+                  <span class="stock-ratio-muted">/ {{ part.minimumStock }}</span>
+                </span>
+              </div>
+              <span class="mini-bar" [class]="statusClass(part.status)">
+                <span class="mini-bar-fill" [style.width.%]="stockBarPercent(part.currentStock, part.minimumStock)"></span>
+              </span>
+            </a>
+          }
+        </div>
+      }
+    </section>
+
+    <a class="view-all" routerLink="/inventory">View all inventory →</a>
+  }
+</div>

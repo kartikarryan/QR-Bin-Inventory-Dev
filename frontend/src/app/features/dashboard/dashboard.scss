@@ -1,0 +1,509 @@
+.dashboard {
+  max-width: 87.5rem;
+  margin: 0 auto;
+  padding: 1.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--color-text);
+}
+
+.subtitle {
+  margin: 0.25rem 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.header-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.updated-at {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+}
+
+.refresh-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.875rem;
+  height: 1.875rem;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled):hover {
+    background: var(--color-accent-soft);
+    color: var(--color-accent);
+  }
+
+  svg {
+    transition: transform var(--transition-base);
+  }
+
+  &.spinning svg {
+    animation: refresh-spin 0.7s linear infinite;
+  }
+}
+
+@keyframes refresh-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.state-message {
+  color: var(--color-text-muted);
+
+  &.error {
+    color: var(--color-danger);
+  }
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid transparent;
+  border-radius: var(--radius-lg);
+  padding: 1.125rem 1.25rem;
+  box-shadow: var(--shadow-sm);
+  transition:
+    box-shadow var(--transition-base),
+    transform var(--transition-base);
+
+  &:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  &.warning {
+    border-left-color: var(--color-warning);
+
+    .stat-value {
+      color: var(--color-warning);
+    }
+  }
+
+  &.danger {
+    border-left-color: var(--color-danger);
+
+    .stat-value {
+      color: var(--color-danger);
+    }
+  }
+}
+
+.stat-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.stat-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+
+  &.neutral {
+    background: var(--color-accent-soft);
+    color: var(--color-accent);
+  }
+
+  &.warning {
+    background: color-mix(in srgb, var(--color-warning) 15%, transparent);
+    color: var(--color-warning);
+  }
+
+  &.danger {
+    background: color-mix(in srgb, var(--color-danger) 15%, transparent);
+    color: var(--color-danger);
+  }
+}
+
+.stat-value {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--color-text);
+  transition: color var(--transition-base);
+}
+
+.stat-caption {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+}
+
+.panel-header {
+  margin-bottom: 0.875rem;
+}
+
+.skeleton-label {
+  width: 5rem;
+  height: 0.75rem;
+}
+
+.skeleton-value {
+  width: 3.5rem;
+  height: 1.75rem;
+  margin-top: 0.5rem;
+}
+
+.skeleton-heading {
+  width: 7rem;
+  height: 1rem;
+  margin-bottom: 1rem;
+}
+
+.skeleton-row {
+  height: 2.25rem;
+  margin-bottom: 0.625rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+h2 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--color-text);
+}
+
+.section-subtitle {
+  margin: 0.2rem 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.825rem;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.375rem;
+  text-align: center;
+  padding: 2rem 1rem;
+  border-radius: var(--radius-md);
+}
+
+.empty-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  margin-bottom: 0.25rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-success) 15%, transparent);
+  color: var(--color-success);
+}
+
+.empty-title {
+  margin: 0;
+  font-weight: 600;
+  color: var(--color-text);
+  font-size: 0.9rem;
+}
+
+.empty-subtitle {
+  margin: 0.125rem 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+th {
+  text-align: left;
+  color: var(--color-text-muted);
+  font-weight: 500;
+  padding: 0.625rem 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+td {
+  padding: 0.625rem 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tbody tr {
+  transition: background-color var(--transition-fast);
+
+  &:hover td {
+    background: var(--color-accent-soft);
+  }
+}
+
+.action-col {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.view-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--color-accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+
+  .arrow {
+    display: inline-block;
+    transition: transform var(--transition-fast);
+  }
+
+  &:hover .arrow {
+    transform: translateX(2px);
+  }
+}
+
+.bin-chip {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  border-radius: var(--radius-sm);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: ui-monospace, 'SF Mono', Consolas, monospace;
+}
+
+.stock-cell {
+  min-width: 8rem;
+}
+
+.stock-ratio {
+  display: flex;
+  align-items: baseline;
+  gap: 0.2rem;
+  font-size: 0.875rem;
+
+  strong {
+    font-weight: 700;
+    transition: color var(--transition-base);
+
+    &.low-stock {
+      color: var(--color-warning);
+    }
+
+    &.out-of-stock {
+      color: var(--color-danger);
+    }
+  }
+}
+
+.stock-ratio-muted {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+}
+
+.mini-bar {
+  display: block;
+  width: 100%;
+  max-width: 6rem;
+  height: 0.3rem;
+  margin-top: 0.3rem;
+  border-radius: 999px;
+  background: var(--color-border);
+  overflow: hidden;
+
+  &.low-stock .mini-bar-fill {
+    background: var(--color-warning);
+  }
+
+  &.out-of-stock .mini-bar-fill {
+    background: var(--color-danger);
+  }
+}
+
+.mini-bar-fill {
+  display: block;
+  height: 100%;
+  background: var(--color-success);
+  border-radius: inherit;
+  transition:
+    width var(--transition-base),
+    background-color var(--transition-base);
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.2rem 0.625rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition:
+    background-color var(--transition-base),
+    color var(--transition-base);
+
+  &.in-stock {
+    background: color-mix(in srgb, var(--color-success) 15%, transparent);
+    color: var(--color-success);
+  }
+
+  &.low-stock {
+    background: color-mix(in srgb, var(--color-warning) 15%, transparent);
+    color: var(--color-warning);
+  }
+
+  &.out-of-stock {
+    background: color-mix(in srgb, var(--color-danger) 15%, transparent);
+    color: var(--color-danger);
+  }
+}
+
+.view-all {
+  align-self: flex-start;
+  color: var(--color-accent);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+
+  &:hover {
+    color: var(--color-accent-hover);
+    text-decoration: underline;
+  }
+}
+
+/* Mobile card fallback for the Needs Attention table — hidden until the table itself
+   gets too cramped to read (matches the pattern already used on the Inventory list). */
+.card-list {
+  display: none;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.attention-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.875rem 1rem;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow var(--transition-base);
+
+  &:hover {
+    box-shadow: var(--shadow-sm);
+  }
+}
+
+.attention-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.part-name {
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.attention-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+/* Breakpoints pinned to Tailwind's standard scale (lg=1024px/md=768px/sm=640px) so behavior
+   matches sm:/md:/lg: even though this project styles with plain SCSS + design tokens, not
+   Tailwind utility classes. Desktop-first: base rules above are the lg+ (1024px+) layout, and
+   each query below progressively adapts it down for narrower viewports. */
+
+/* < lg (1024px): tablet — stat cards go 3 → 2 per row. */
+@media (max-width: 64rem) {
+  .stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* < md (768px): mobile — Needs Attention switches from a table to a scannable card list. */
+@media (max-width: 48rem) {
+  .dashboard {
+    padding: 1.25rem 1rem;
+  }
+
+  .table-wrap {
+    display: none;
+  }
+
+  .card-list {
+    display: flex;
+  }
+}
+
+/* < sm (640px): small mobile — stat cards stack to a single column. */
+@media (max-width: 40rem) {
+  .stat-grid {
+    grid-template-columns: 1fr;
+  }
+}

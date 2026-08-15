@@ -1,0 +1,104 @@
+<div class="part-details-page">
+  <a class="back-link" routerLink="/inventory">← Inventory</a>
+
+  @if (loading()) {
+    <div class="skeleton skeleton-title"></div>
+    <div class="skeleton skeleton-row"></div>
+    <div class="skeleton skeleton-stock-card"></div>
+    <div class="detail-grid">
+      <div class="skeleton skeleton-row"></div>
+      <div class="skeleton skeleton-row"></div>
+    </div>
+  } @else if (errorMessage()) {
+    <p class="state-message error">{{ errorMessage() }}</p>
+  } @else if (part(); as data) {
+    <div class="page-header">
+      <div>
+        <h1>{{ data.partName }}</h1>
+        <p class="subtitle">{{ data.partNumber ?? '—' }}</p>
+      </div>
+      <div class="header-actions">
+        <a class="btn-secondary" [routerLink]="['/inventory', data.id, 'edit']">Edit Part</a>
+        <button
+          type="button"
+          class="btn-primary"
+          [disabled]="!data.qrToken"
+          [title]="data.qrToken ? '' : 'No bin assigned yet'"
+          (click)="showQrPreview.set(true)"
+        >
+          Print QR
+        </button>
+      </div>
+    </div>
+
+    <div class="detail-row">
+      <span class="detail-label">Bin</span>
+      @if (data.binCode) {
+        <span class="bin-chip">{{ data.binCode }}</span>
+      } @else {
+        <span class="detail-value">—</span>
+      }
+    </div>
+
+    <div class="stock-card">
+      <span class="stock-label">Current Stock</span>
+      <span class="stock-value">{{ data.currentStock }}</span>
+      <span class="stock-unit">pieces</span>
+      <div class="stock-bar" [class]="statusClass(data.status)">
+        <div class="stock-bar-fill" [style.width.%]="stockBarPercent(data.currentStock, data.minimumStock)"></div>
+      </div>
+
+      <div class="adjust-stock">
+        <button
+          type="button"
+          class="adjust-btn remove"
+          [disabled]="adjusting()"
+          (click)="adjustStock(-1)"
+          aria-label="Remove stock"
+        >
+          − Remove
+        </button>
+        <input
+          type="number"
+          class="adjust-amount"
+          [(ngModel)]="adjustAmount"
+          min="1"
+          inputmode="numeric"
+          aria-label="Quantity"
+        />
+        <button
+          type="button"
+          class="adjust-btn add"
+          [disabled]="adjusting()"
+          (click)="adjustStock(1)"
+          aria-label="Add stock"
+        >
+          + Add
+        </button>
+      </div>
+      @if (adjustError()) {
+        <p class="adjust-error">{{ adjustError() }}</p>
+      }
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-row">
+        <span class="detail-label">Minimum Stock</span>
+        <span class="detail-value">{{ data.minimumStock }} pieces</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Status</span>
+        <span class="status-badge" [class]="statusClass(data.status)">● {{ data.status }}</span>
+      </div>
+    </div>
+
+    @if (showQrPreview() && data.qrToken && data.binCode) {
+      <app-qr-label-preview
+        [partName]="data.partName"
+        [binCode]="data.binCode"
+        [qrToken]="data.qrToken"
+        (closed)="showQrPreview.set(false)"
+      />
+    }
+  }
+</div>

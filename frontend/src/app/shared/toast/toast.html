@@ -1,0 +1,31 @@
+<div class="toast-tray">
+  @for (toast of toastService.toasts(); track toast.id) {
+    <div class="toast" [class]="toast.variant" role="status">
+      <span class="toast-icon" aria-hidden="true">
+        @switch (toast.variant) {
+          @case ('success') {
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 6 9 17l-5-5" />
+            </svg>
+          }
+          @case ('error') {
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12.5" />
+              <circle cx="12" cy="16" r="0.5" fill="currentColor" />
+            </svg>
+          }
+          @default {
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="11" x2="12" y2="16" />
+              <circle cx="12" cy="7.5" r="0.5" fill="currentColor" />
+            </svg>
+          }
+        }
+      </span>
+      <span class="toast-text">{{ toast.text }}</span>
+      <button type="button" class="toast-dismiss" (click)="dismiss(toast.id)" aria-label="Dismiss">✕</button>
+    </div>
+  }
+</div>

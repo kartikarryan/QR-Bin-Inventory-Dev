@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="QrBin.Api/QrBin.Api.csproj" />
+  <Project Path="QrBin.Data/QrBin.Data.csproj" />
+  <Project Path="QrBin.Validators/QrBin.Validators.csproj" />
+  <Project Path="QrBin.ViewModels/QrBin.ViewModels.csproj" />
+</Solution>

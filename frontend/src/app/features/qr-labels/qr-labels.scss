@@ -1,0 +1,340 @@
+.qr-labels-page {
+  max-width: 75rem;
+  margin: 0 auto;
+  padding: 1.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.top-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--color-text);
+}
+
+.subtitle {
+  margin: 0.25rem 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.state-message {
+  color: var(--color-text-muted);
+
+  &.error {
+    color: var(--color-danger);
+  }
+}
+
+.panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.skeleton-panel {
+  padding: 1.25rem;
+}
+
+.skeleton-row {
+  height: 2.5rem;
+  margin-bottom: 0.75rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.empty-state {
+  position: relative;
+  padding: 2.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
+}
+
+.empty-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-bottom: 0.25rem;
+  border-radius: var(--radius-md);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+.empty-title {
+  margin: 0;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.empty-subtitle {
+  margin: 0 0 0.5rem;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+th {
+  text-align: left;
+  color: var(--color-text-muted);
+  font-weight: 500;
+  padding: 0.625rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+td {
+  padding: 0.625rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+.checkbox-col {
+  width: 2.5rem;
+
+  input[type='checkbox'] {
+    accent-color: var(--color-accent);
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
+  }
+}
+
+.bin-chip {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  border-radius: var(--radius-sm);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: ui-monospace, 'SF Mono', Consolas, monospace;
+}
+
+.hint-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 0.875rem;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
+  border-radius: var(--radius-md);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  font-size: 0.85rem;
+}
+
+tbody tr {
+  transition: background-color var(--transition-fast);
+
+  &.selected {
+    background: var(--color-accent-soft);
+  }
+}
+
+.part-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.label-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+}
+
+.qr-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-ghost {
+  font: inherit;
+  font-weight: 600;
+  padding: 0.5rem 1.125rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background-color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.btn-primary {
+  border: none;
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled):hover {
+    background: var(--color-accent-hover);
+  }
+
+  &:not(:disabled):active {
+    background: var(--color-accent-active);
+    transform: translateY(1px);
+  }
+}
+
+.btn-secondary {
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text);
+
+  &:hover {
+    background: var(--color-border);
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+.btn-ghost {
+  font-weight: 500;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text);
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled):hover {
+    background: var(--color-border);
+  }
+
+  &:not(:disabled):active {
+    transform: translateY(1px);
+  }
+
+  &.active {
+    background: var(--color-accent-soft);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+}
+
+.card-list {
+  display: none;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.label-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 0.875rem 1rem;
+  transition: border-color var(--transition-fast);
+
+  &.selected {
+    border-color: var(--color-accent);
+    background: var(--color-accent-soft);
+  }
+}
+
+.label-card-top {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  input[type='checkbox'] {
+    accent-color: var(--color-accent);
+    width: 1.125rem;
+    height: 1.125rem;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+}
+
+.label-card-info {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  min-width: 0;
+
+  .part-name {
+    font-weight: 500;
+    color: var(--color-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.label-card-actions {
+  display: flex;
+  gap: 0.5rem;
+
+  .btn-ghost {
+    flex: 1;
+    text-align: center;
+  }
+}
+
+/* < md (768px), matching Tailwind's standard scale — see dashboard.scss for the full breakpoint set. */
+@media (max-width: 48rem) {
+  .qr-labels-page {
+    padding: 1.25rem 1rem;
+  }
+
+  .table-wrap {
+    display: none;
+  }
+
+  .card-list {
+    display: flex;
+  }
+}
+

@@ -1,0 +1,173 @@
+<div class="part-form-page">
+  @if (createdPart(); as created) {
+    <div class="panel success-state">
+      <span class="success-icon" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 6 9 17l-5-5" />
+        </svg>
+      </span>
+      <p class="success-title">Part created</p>
+      <p class="success-message">{{ created.partName }} has been added to bin {{ created.binCode }}.</p>
+
+      <div class="success-actions">
+        <button
+          type="button"
+          class="btn-primary"
+          [disabled]="!created.qrToken"
+          (click)="showQrPreview.set(true)"
+        >
+          Print QR Label
+        </button>
+        <a class="back-link-inline" routerLink="/inventory">Back to Inventory</a>
+      </div>
+    </div>
+
+    @if (showQrPreview() && created.qrToken && created.binCode) {
+      <app-qr-label-preview
+        [partName]="created.partName"
+        [binCode]="created.binCode"
+        [qrToken]="created.qrToken"
+        (closed)="showQrPreview.set(false)"
+      />
+    }
+  } @else {
+    <a class="back-link" [routerLink]="isEditMode && partId !== null ? ['/inventory', partId] : ['/inventory']">
+      ← Back to Inventory
+    </a>
+
+    <div class="form-layout">
+      <div class="form-column">
+        <div class="page-header">
+          <h1>{{ isEditMode ? 'Edit Part' : 'Add Part' }}</h1>
+          <p class="subtitle">
+            {{ isEditMode ? 'Update part details' : 'Add a part and assign it to a physical bin' }}
+          </p>
+        </div>
+
+        @if (loading()) {
+          <div class="panel">
+            <div class="skeleton skeleton-field-label"></div>
+            <div class="skeleton skeleton-field"></div>
+            <div class="skeleton skeleton-field-label"></div>
+            <div class="skeleton skeleton-field"></div>
+            <div class="skeleton skeleton-field-label"></div>
+            <div class="skeleton skeleton-field"></div>
+          </div>
+        } @else if (loadFailed()) {
+          <p class="state-message error">{{ errorMessage() }}</p>
+        } @else {
+          <form class="panel" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+            <label class="field">
+              <span>Part name *</span>
+              <input type="text" formControlName="partName" placeholder="M8 Bolt" />
+              @if (form.controls.partName.invalid && form.controls.partName.touched) {
+                <span class="field-error">Part name is required.</span>
+              }
+            </label>
+
+            <label class="field">
+              <span>Part number <em>(optional)</em></span>
+              <input type="text" formControlName="partNumber" placeholder="M8-001" />
+            </label>
+
+            <label class="field">
+              <span>Bin / Location *</span>
+              <input type="text" formControlName="binCode" placeholder="A-01" />
+              @if (form.controls.binCode.invalid && form.controls.binCode.touched) {
+                <span class="field-error">Bin / Location is required.</span>
+              }
+            </label>
+
+            @if (isEditMode) {
+              <label class="field">
+                <span>Minimum stock *</span>
+                <div class="stepper">
+                  <button type="button" (click)="adjustStock('minimumStock', -1)" aria-label="Decrease minimum stock">−</button>
+                  <input type="number" formControlName="minimumStock" min="0" inputmode="numeric" placeholder="10" />
+                  <button type="button" (click)="adjustStock('minimumStock', 1)" aria-label="Increase minimum stock">+</button>
+                </div>
+                @if (form.controls.minimumStock.invalid && form.controls.minimumStock.touched) {
+                  <span class="field-error">Enter a quantity of 0 or more.</span>
+                }
+              </label>
+              <p class="field-hint">Current stock is changed through stock movements, not here.</p>
+            } @else {
+              <div class="field-row">
+                <label class="field">
+                  <span>Current stock *</span>
+                  <div class="stepper">
+                    <button type="button" (click)="adjustStock('currentStock', -1)" aria-label="Decrease current stock">−</button>
+                    <input type="number" formControlName="currentStock" min="0" inputmode="numeric" placeholder="50" />
+                    <button type="button" (click)="adjustStock('currentStock', 1)" aria-label="Increase current stock">+</button>
+                  </div>
+                  @if (form.controls.currentStock.invalid && form.controls.currentStock.touched) {
+                    <span class="field-error">Enter a quantity of 0 or more.</span>
+                  }
+                </label>
+
+                <label class="field">
+                  <span>Minimum stock *</span>
+                  <div class="stepper">
+                    <button type="button" (click)="adjustStock('minimumStock', -1)" aria-label="Decrease minimum stock">−</button>
+                    <input type="number" formControlName="minimumStock" min="0" inputmode="numeric" placeholder="10" />
+                    <button type="button" (click)="adjustStock('minimumStock', 1)" aria-label="Increase minimum stock">+</button>
+                  </div>
+                  @if (form.controls.minimumStock.invalid && form.controls.minimumStock.touched) {
+                    <span class="field-error">Enter a quantity of 0 or more.</span>
+                  }
+                </label>
+              </div>
+            }
+
+            @if (errorMessage()) {
+              <div class="form-error" role="alert">{{ errorMessage() }}</div>
+            }
+
+            <div class="form-actions">
+              <button type="button" class="btn-secondary" (click)="cancel()">Cancel</button>
+              <button type="submit" class="btn-primary" [disabled]="submitting()">
+                {{ submitting() ? 'Saving…' : isEditMode ? 'Save Changes' : 'Create Part' }}
+              </button>
+            </div>
+          </form>
+        }
+      </div>
+
+      @if (!isEditMode) {
+        <aside class="workflow-panel">
+          <span class="workflow-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <rect x="2" y="2" width="7" height="7" rx="1.5" stroke="white" stroke-width="2" />
+              <rect x="15" y="2" width="7" height="7" rx="1.5" stroke="white" stroke-width="2" />
+              <rect x="2" y="15" width="7" height="7" rx="1.5" stroke="white" stroke-width="2" />
+              <rect x="15" y="15" width="3" height="3" fill="white" />
+              <rect x="19" y="15" width="3" height="3" fill="white" />
+              <rect x="15" y="19" width="3" height="3" fill="white" />
+            </svg>
+          </span>
+          <h3>After creation</h3>
+          <p>Print the QR label and stick it on the bin for quick scanning.</p>
+
+          <ol class="workflow-steps">
+            <li>
+              <span class="step-dot"></span>
+              <span>Create Part</span>
+            </li>
+            <li>
+              <span class="step-dot"></span>
+              <span>Print QR</span>
+            </li>
+            <li>
+              <span class="step-dot"></span>
+              <span>Stick QR on physical bin</span>
+            </li>
+            <li>
+              <span class="step-dot"></span>
+              <span>Technician scans QR</span>
+            </li>
+          </ol>
+        </aside>
+      }
+    </div>
+  }
+</div>

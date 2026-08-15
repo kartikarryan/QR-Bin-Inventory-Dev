@@ -1,0 +1,140 @@
+<div class="inventory">
+  <div class="page-header">
+    <div>
+      <h1>Inventory</h1>
+      <p class="subtitle">Manage parts stored in your physical bins</p>
+    </div>
+    <a class="btn-primary" routerLink="/inventory/add">+ Add Part</a>
+  </div>
+
+  @if (loading()) {
+    <div class="skeleton skeleton-search"></div>
+    <div class="panel skeleton-panel">
+      <div class="skeleton skeleton-row"></div>
+      <div class="skeleton skeleton-row"></div>
+      <div class="skeleton skeleton-row"></div>
+      <div class="skeleton skeleton-row"></div>
+    </div>
+  } @else if (errorMessage()) {
+    <p class="state-message error">{{ errorMessage() }}</p>
+  } @else if (parts().length === 0) {
+    <div class="panel empty-state pattern-dots">
+      <span class="empty-icon" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <rect x="2" y="2" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2" />
+          <rect x="15" y="2" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2" />
+          <rect x="2" y="15" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2" />
+          <rect x="15" y="15" width="3" height="3" fill="currentColor" />
+          <rect x="19" y="15" width="3" height="3" fill="currentColor" />
+          <rect x="15" y="19" width="3" height="3" fill="currentColor" />
+        </svg>
+      </span>
+      <p class="empty-title">No parts added yet.</p>
+      <p class="empty-subtitle">Create your first part and assign it to a physical bin.</p>
+      <a class="btn-primary" routerLink="/inventory/add">+ Add Part</a>
+    </div>
+  } @else {
+    <label class="search-field">
+      <span class="search-icon">🔍</span>
+      <input
+        type="search"
+        [ngModel]="searchTerm()"
+        (ngModelChange)="onSearchTermChange($event)"
+        placeholder="Search part, part number or bin..."
+      />
+    </label>
+
+    @if (filteredParts().length === 0) {
+      <p class="state-message">No parts match your search.</p>
+    } @else {
+      <div class="panel table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Part</th>
+              <th>Part Number</th>
+              <th>Bin</th>
+              <th>Stock</th>
+              <th>Minimum</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (part of pagedParts(); track part.id) {
+              <tr class="row-link" [routerLink]="['/inventory', part.id]">
+                <td>{{ part.partName }}</td>
+                <td>{{ part.partNumber ?? '—' }}</td>
+                <td>
+                  @if (part.binCode) {
+                    <span class="bin-chip">{{ part.binCode }}</span>
+                  } @else {
+                    —
+                  }
+                </td>
+                <td class="stock-cell">
+                  <span class="stock-value" [class]="statusClass(part.status)">{{ part.currentStock }}</span>
+                  <span class="mini-bar" [class]="statusClass(part.status)">
+                    <span class="mini-bar-fill" [style.width.%]="stockBarPercent(part.currentStock, part.minimumStock)"></span>
+                  </span>
+                </td>
+                <td>{{ part.minimumStock }}</td>
+                <td>
+                  <span class="status-badge" [class]="statusClass(part.status)">● {{ part.status }}</span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card-list">
+        @for (part of pagedParts(); track part.id) {
+          <div class="part-card" [routerLink]="['/inventory', part.id]">
+            <div class="part-card-header">
+              <span class="part-name">{{ part.partName }}</span>
+              <span class="status-badge" [class]="statusClass(part.status)">● {{ part.status }}</span>
+            </div>
+            <div class="part-card-meta">
+              {{ part.partNumber ?? '—' }} ·
+              @if (part.binCode) {
+                <span class="bin-chip">{{ part.binCode }}</span>
+              } @else {
+                —
+              }
+            </div>
+            <div class="part-card-stock">
+              Stock {{ part.currentStock }} / min {{ part.minimumStock }}
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="list-footer">
+        <p class="showing-count">
+          Showing {{ pagedParts().length }} of {{ filteredParts().length }} parts
+        </p>
+
+        @if (totalPages() > 1) {
+          <nav class="pagination" aria-label="Inventory pages">
+            <button type="button" (click)="goToPage(currentPage() - 1)" [disabled]="currentPage() === 1" aria-label="Previous page">‹</button>
+            @for (page of pageNumbers(); track $index) {
+              @if (page === 'ellipsis') {
+                <span class="page-ellipsis">…</span>
+              } @else {
+                <button
+                  type="button"
+                  class="page-btn"
+                  [class.active]="page === currentPage()"
+                  (click)="goToPage(page)"
+                >
+                  {{ page }}
+                </button>
+              }
+            }
+            <button type="button" (click)="goToPage(currentPage() + 1)" [disabled]="currentPage() === totalPages()" aria-label="Next page">›</button>
+          </nav>
+        }
+      </div>
+    }
+  }
+</div>

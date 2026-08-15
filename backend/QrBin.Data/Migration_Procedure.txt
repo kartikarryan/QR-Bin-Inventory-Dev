@@ -1,0 +1,11 @@
+step 1
+
+dotnet ef migrations add {Migration_Name} --project QrBin.Data --startup-project QrBin.Api -o Migrations
+
+step 2
+
+dotnet ef migrations script --project QrBin.Data --startup-project QrBin.Api --idempotent --output "QrBin.Data/Migrations/Sql/{script_name.sql}"
+
+step 3
+
+dotnet ef database update --project QrBin.Data --startup-project QrBin.Api

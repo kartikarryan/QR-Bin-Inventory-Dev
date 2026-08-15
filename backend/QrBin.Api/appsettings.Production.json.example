@@ -1,0 +1,20 @@
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=REPLACE_ME;Port=5432;Database=qrbin;Username=REPLACE_ME;Password=REPLACE_ME;SSL Mode=Require"
+  },
+  "Jwt": {
+    "Issuer": "QrBinInventory",
+    "Audience": "QrBinInventory",
+    "SigningKey": "REPLACE_ME_WITH_A_LONG_RANDOM_SECRET_AT_LEAST_32_BYTES",
+    "ManagerTokenExpiryMinutes": 60
+  },
+  "Cors": {
+    "AllowedOrigins": "https://REPLACE_ME.example.com"
+  },
+  "Seed": {
+    "OrganizationName": "REPLACE_ME",
+    "ManagerEmail": "REPLACE_ME",
+    "ManagerPassword": "REPLACE_ME",
+    "ManagerFullName": "REPLACE_ME"
+  }
+}

@@ -1,0 +1,158 @@
+<div class="qr-labels-page">
+  <div class="page-header">
+    <div>
+      <h1>QR Labels</h1>
+      <p class="subtitle">Print QR codes for your physical bins</p>
+    </div>
+
+    @if (parts().length > 0) {
+      <div class="top-controls">
+        <button type="button" class="btn-secondary" (click)="toggleSelectAll()">
+          {{ allSelected() ? 'Deselect All' : 'Select All' }}
+        </button>
+        <button
+          type="button"
+          class="btn-primary"
+          [disabled]="selectedCount() === 0 || bulkPrinting()"
+          (click)="printSelected()"
+        >
+          {{ bulkPrinting() ? 'Preparing…' : 'Print Selected' + (selectedCount() > 0 ? ' (' + selectedCount() + ')' : '') }}
+        </button>
+      </div>
+    }
+  </div>
+
+  @if (loading()) {
+    <div class="panel skeleton-panel">
+      <div class="skeleton skeleton-row"></div>
+      <div class="skeleton skeleton-row"></div>
+      <div class="skeleton skeleton-row"></div>
+      <div class="skeleton skeleton-row"></div>
+    </div>
+  } @else if (errorMessage()) {
+    <p class="state-message error">{{ errorMessage() }}</p>
+  } @else if (parts().length === 0) {
+    <div class="panel empty-state pattern-dots">
+      <span class="empty-icon" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <rect x="2" y="2" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2" />
+          <rect x="15" y="2" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2" />
+          <rect x="2" y="15" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2" />
+          <rect x="15" y="15" width="3" height="3" fill="currentColor" />
+          <rect x="19" y="15" width="3" height="3" fill="currentColor" />
+          <rect x="15" y="19" width="3" height="3" fill="currentColor" />
+        </svg>
+      </span>
+      <p class="empty-title">No physical bins to label yet.</p>
+      <p class="empty-subtitle">Assign a part to a physical bin to generate its QR label.</p>
+    </div>
+  } @else {
+    @if (selectedCount() === 0) {
+      <div class="hint-banner">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="11" x2="12" y2="16" />
+          <circle cx="12" cy="7.5" r="0.5" fill="currentColor" />
+        </svg>
+        Select one or more bins to print QR labels.
+      </div>
+    }
+
+    <div class="panel table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="checkbox-col"></th>
+            <th>Part</th>
+            <th>Bin</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (part of parts(); track part.id) {
+            <tr [class.selected]="isSelected(part.id)">
+              <td class="checkbox-col">
+                <input
+                  type="checkbox"
+                  [checked]="isSelected(part.id)"
+                  (change)="toggleSelected(part.id)"
+                  [attr.aria-label]="'Select ' + part.partName"
+                />
+              </td>
+              <td>
+                <div class="part-cell">
+                  <span class="label-icon" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                      <rect x="2" y="2" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2" />
+                      <rect x="15" y="2" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2" />
+                      <rect x="2" y="15" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2" />
+                      <rect x="15" y="15" width="3" height="3" fill="currentColor" />
+                      <rect x="19" y="15" width="3" height="3" fill="currentColor" />
+                      <rect x="15" y="19" width="3" height="3" fill="currentColor" />
+                    </svg>
+                  </span>
+                  <span>{{ part.partName }}</span>
+                </div>
+              </td>
+              <td><span class="bin-chip">{{ part.binCode }}</span></td>
+              <td class="qr-actions">
+                <button type="button" class="btn-ghost" [class.active]="previewPart()?.id === part.id" (click)="viewQr(part)">View QR</button>
+                <button
+                  type="button"
+                  class="btn-ghost"
+                  [disabled]="printingIds().has(part.id)"
+                  (click)="printOne(part)"
+                >
+                  {{ printingIds().has(part.id) ? 'Preparing…' : 'Print' }}
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card-list">
+      @for (part of parts(); track part.id) {
+        <div class="label-card" [class.selected]="isSelected(part.id)">
+          <div class="label-card-top">
+            <input
+              type="checkbox"
+              [checked]="isSelected(part.id)"
+              (change)="toggleSelected(part.id)"
+              [attr.aria-label]="'Select ' + part.partName"
+            />
+            <div class="label-card-info">
+              <span class="part-name">{{ part.partName }}</span>
+              <span class="bin-chip">{{ part.binCode }}</span>
+            </div>
+          </div>
+          <div class="label-card-actions">
+            <button type="button" class="btn-ghost" [class.active]="previewPart()?.id === part.id" (click)="viewQr(part)">View QR</button>
+            <button
+              type="button"
+              class="btn-ghost"
+              [disabled]="printingIds().has(part.id)"
+              (click)="printOne(part)"
+            >
+              {{ printingIds().has(part.id) ? 'Preparing…' : 'Print' }}
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (previewPart(); as part) {
+      <app-qr-label-preview
+        [partName]="part.partName"
+        [binCode]="part.binCode"
+        [qrToken]="part.qrToken"
+        [showSettings]="true"
+        [(labelSizeMm)]="labelSizeMm"
+        [(paper)]="paper"
+        [(labelsPerSheet)]="labelsPerSheet"
+        (closed)="closePreview()"
+      />
+    }
+  }
+</div>
