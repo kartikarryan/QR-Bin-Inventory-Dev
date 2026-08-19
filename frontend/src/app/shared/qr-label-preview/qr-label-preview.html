@@ -1,5 +1,5 @@
 <div class="qr-overlay" (click)="close()">
-  <div class="qr-modal" [class.with-settings]="showSettings()" (click)="$event.stopPropagation()">
+  <div class="qr-modal" (click)="$event.stopPropagation()">
     <div class="modal-body">
       <div class="qr-label">
         <span class="label-part-name">{{ partName().toUpperCase() }}</span>
@@ -10,43 +10,13 @@
         }
         <span class="label-bin">BIN {{ binCode() }}</span>
       </div>
-
-      @if (showSettings()) {
-        <div class="settings-side">
-          <h3>Print Settings</h3>
-
-          <label class="settings-field">
-            <span>Label Size</span>
-            <select [(ngModel)]="labelSizeMm">
-              <option [ngValue]="40">40mm x 40mm</option>
-              <option [ngValue]="60">60mm x 60mm</option>
-              <option [ngValue]="80">80mm x 80mm</option>
-            </select>
-          </label>
-
-          <label class="settings-field">
-            <span>Paper</span>
-            <select [(ngModel)]="paper">
-              <option value="A4">A4 Sheet (Multiple)</option>
-              <option value="Letter">Letter Sheet (Multiple)</option>
-            </select>
-          </label>
-
-          <label class="settings-field">
-            <span>Labels per sheet</span>
-            <select [(ngModel)]="labelsPerSheet">
-              <option [ngValue]="6">6</option>
-              <option [ngValue]="12">12</option>
-              <option [ngValue]="20">20</option>
-            </select>
-          </label>
-        </div>
-      }
     </div>
 
     <div class="modal-actions">
       <button type="button" class="btn-secondary" (click)="close()">Close</button>
-      <button type="button" class="btn-primary" (click)="print()" [disabled]="!qrDataUrl()">Print Label</button>
+      <button type="button" class="btn-primary" (click)="download()" [disabled]="!qrDataUrl() || downloading()">
+        {{ downloading() ? 'Preparing…' : 'Download PDF' }}
+      </button>
     </div>
   </div>
 </div>

@@ -1,8 +1,8 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { InventoryService } from '../../core/services/inventory.service';
 import { InventoryPart } from '../../core/models/inventory.model';
-import { generateQrDataUrl } from '../../shared/qr-code.util';
-import { printQrLabels, type PaperSize } from '../../shared/qr-print.util';
+import { generateQrPngDataUrl } from '../../shared/qr-code.util';
+import { downloadQrLabelsPdf } from '../../shared/qr-print.util';
 import { QrLabelPreview } from '../../shared/qr-label-preview/qr-label-preview';
 
 interface LabelablePart extends InventoryPart {
@@ -23,24 +23,13 @@ export class QrLabels {
   readonly loading = signal(true);
   readonly errorMessage = signal<string | null>(null);
   readonly selectedIds = signal<Set<number>>(new Set());
-  readonly printingIds = signal<Set<number>>(new Set());
-  readonly bulkPrinting = signal(false);
+  readonly downloadingIds = signal<Set<number>>(new Set());
+  readonly bulkDownloading = signal(false);
 
   readonly previewPart = signal<LabelablePart | null>(null);
 
-  readonly labelSizeMm = signal(60);
-  readonly paper = signal<PaperSize>('A4');
-  readonly labelsPerSheet = signal(12);
-
   readonly selectedCount = computed(() => this.selectedIds().size);
   readonly allSelected = computed(() => this.parts().length > 0 && this.selectedIds().size === this.parts().length);
-
-  private readonly columnsForSheet = computed(() => {
-    const n = this.labelsPerSheet();
-    if (n <= 6) return 2;
-    if (n <= 12) return 3;
-    return 4;
-  });
 
   constructor() {
     this.loadParts();
@@ -88,44 +77,39 @@ export class QrLabels {
     this.previewPart.set(null);
   }
 
-  printOne(part: LabelablePart): void {
-    const printing = new Set(this.printingIds());
-    printing.add(part.id);
-    this.printingIds.set(printing);
+  downloadOne(part: LabelablePart): void {
+    const downloading = new Set(this.downloadingIds());
+    downloading.add(part.id);
+    this.downloadingIds.set(downloading);
 
-    generateQrDataUrl(part.qrToken)
+    generateQrPngDataUrl(part.qrToken)
       .then((qrDataUrl) =>
-        printQrLabels([{ partName: part.partName, binCode: part.binCode, qrDataUrl }], this.printSettings()),
+        downloadQrLabelsPdf(
+          [{ partName: part.partName, binCode: part.binCode, qrDataUrl }],
+          `qr-label-${part.binCode}.pdf`,
+        ),
       )
       .finally(() => {
-        const next = new Set(this.printingIds());
+        const next = new Set(this.downloadingIds());
         next.delete(part.id);
-        this.printingIds.set(next);
+        this.downloadingIds.set(next);
       });
   }
 
-  printSelected(): void {
+  downloadSelected(): void {
     const selected = this.parts().filter((p) => this.selectedIds().has(p.id));
     if (selected.length === 0) return;
 
-    this.bulkPrinting.set(true);
+    this.bulkDownloading.set(true);
 
     Promise.all(
       selected.map(async (part) => ({
         partName: part.partName,
         binCode: part.binCode,
-        qrDataUrl: await generateQrDataUrl(part.qrToken),
+        qrDataUrl: await generateQrPngDataUrl(part.qrToken),
       })),
     )
-      .then((labels) => printQrLabels(labels, this.printSettings()))
-      .finally(() => this.bulkPrinting.set(false));
-  }
-
-  private printSettings() {
-    return {
-      labelSizeMm: this.labelSizeMm(),
-      columns: this.columnsForSheet(),
-      paper: this.paper(),
-    };
+      .then((labels) => downloadQrLabelsPdf(labels, 'qr-labels.pdf'))
+      .finally(() => this.bulkDownloading.set(false));
   }
 }

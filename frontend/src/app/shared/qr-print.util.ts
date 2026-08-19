@@ -1,114 +1,59 @@
+import jsPDF from 'jspdf';
+
 export interface PrintableLabel {
   partName: string;
   binCode: string;
   qrDataUrl: string;
 }
 
-export type PaperSize = 'A4' | 'Letter';
-
-export interface PrintSettings {
-  labelSizeMm: number;
-  columns: number;
-  paper: PaperSize;
-}
-
-const DEFAULT_SETTINGS: PrintSettings = { labelSizeMm: 60, columns: 3, paper: 'A4' };
+// Fixed defaults — one size that works for any bin, no settings for the user to pick.
+const LABEL_SIZE_MM = 60;
+const COLUMNS = 3;
+const GAP_MM = 4;
+const MARGIN_MM = 10;
 
 /**
- * Prints via a dedicated blank window rather than an in-page print stylesheet — isolating the
- * label markup this way avoids having to fight the app shell (header/sidebar) out of the printout.
- * Labels lay out as a real grid sheet (several per page, sized in mm) rather than one-per-page,
- * matching how a workshop would actually print a batch of stickers to cut out.
+ * Builds a ready-to-print PDF (fixed A4 sheet, 60mm labels, 3 per row) and triggers a browser
+ * download — no print dialog, no settings. A manager hands this file straight to a print shop.
  */
-export function printQrLabels(labels: PrintableLabel[], settings: PrintSettings = DEFAULT_SETTINGS): void {
-  const printWindow = window.open('', '_blank', 'width=480,height=640');
-  if (!printWindow) return;
+export function downloadQrLabelsPdf(labels: PrintableLabel[], fileName: string): void {
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
 
-  const { labelSizeMm, columns, paper } = settings;
-  const qrSizeMm = Math.round(labelSizeMm * 0.62);
+  const colsPerPage = Math.max(1, Math.min(COLUMNS, Math.floor((pageWidth - MARGIN_MM * 2) / (LABEL_SIZE_MM + GAP_MM))));
+  const rowsPerPage = Math.max(1, Math.floor((pageHeight - MARGIN_MM * 2) / (LABEL_SIZE_MM + GAP_MM)));
+  const perPage = colsPerPage * rowsPerPage;
 
-  const labelsHtml = labels
-    .map(
-      (label) => `
-        <div class="label">
-          <div class="part-name">${escapeHtml(label.partName.toUpperCase())}</div>
-          <img src="${label.qrDataUrl}" alt="QR code" class="qr-image" />
-          <div class="bin-code">BIN ${escapeHtml(label.binCode)}</div>
-        </div>`,
-    )
-    .join('');
+  const qrSize = LABEL_SIZE_MM * 0.6;
 
-  printWindow.document.write(`
-    <!doctype html>
-    <html>
-      <head>
-        <title>QR Labels</title>
-        <style>
-          @page { size: ${paper}; margin: 10mm; }
-          :root { color-scheme: light; }
-          * { box-sizing: border-box; }
-          body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            margin: 0;
-            background: #fff;
-            color: #000;
-          }
-          .sheet {
-            display: grid;
-            grid-template-columns: repeat(${columns}, ${labelSizeMm}mm);
-            justify-content: center;
-            gap: 4mm;
-            padding: 6mm;
-          }
-          .label {
-            width: ${labelSizeMm}mm;
-            height: ${labelSizeMm}mm;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 2mm;
-            background: #fff;
-            border: 3px solid #000;
-            border-radius: 3mm;
-            padding: 3mm;
-            text-align: center;
-            break-inside: avoid;
-            page-break-inside: avoid;
-          }
-          .part-name {
-            font-size: 3.2mm;
-            font-weight: 800;
-            letter-spacing: 0.03em;
-          }
-          .qr-image {
-            width: ${qrSizeMm}mm;
-            height: ${qrSizeMm}mm;
-          }
-          .bin-code {
-            font-size: 3mm;
-            font-weight: 700;
-            letter-spacing: 0.02em;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="sheet">
-          ${labelsHtml}
-        </div>
-      </body>
-    </html>
-  `);
-  printWindow.document.close();
+  labels.forEach((label, i) => {
+    const posOnPage = i % perPage;
+    if (i > 0 && posOnPage === 0) doc.addPage();
 
-  printWindow.onload = () => {
-    printWindow.focus();
-    printWindow.print();
-  };
-}
+    const col = posOnPage % colsPerPage;
+    const row = Math.floor(posOnPage / colsPerPage);
+    const x = MARGIN_MM + col * (LABEL_SIZE_MM + GAP_MM);
+    const y = MARGIN_MM + row * (LABEL_SIZE_MM + GAP_MM);
 
-function escapeHtml(value: string): string {
-  const div = document.createElement('div');
-  div.textContent = value;
-  return div.innerHTML;
+    doc.setDrawColor(0);
+    doc.setLineWidth(0.5);
+    doc.roundedRect(x, y, LABEL_SIZE_MM, LABEL_SIZE_MM, 2, 2);
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.text(label.partName.toUpperCase(), x + LABEL_SIZE_MM / 2, y + 8, {
+      align: 'center',
+      maxWidth: LABEL_SIZE_MM - 6,
+    });
+
+    const qrX = x + (LABEL_SIZE_MM - qrSize) / 2;
+    const qrY = y + 12;
+    doc.addImage(label.qrDataUrl, 'PNG', qrX, qrY, qrSize, qrSize);
+
+    doc.setFontSize(9);
+    doc.text(`BIN ${label.binCode}`, x + LABEL_SIZE_MM / 2, qrY + qrSize + 7, { align: 'center' });
+  });
+
+  doc.save(fileName);
 }
