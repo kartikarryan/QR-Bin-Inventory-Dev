@@ -39,7 +39,8 @@
   flex-direction: column;
   align-items: center;
   gap: 0.875rem;
-  width: 15rem;
+  width: 100%;
+  max-width: 15rem;
   background: #fff;
   border: 3px solid #000;
   border-radius: 0.625rem;
