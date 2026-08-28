@@ -1,13 +1,7 @@
 import { Routes } from '@angular/router';
-import { authGuard, guestGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
-  {
-    path: 'login',
-    loadComponent: () => import('./features/login/login').then((m) => m.Login),
-    canActivate: [guestGuard],
-  },
   {
     path: 'scan/:qrToken',
     loadComponent: () => import('./features/scan/scan').then((m) => m.Scan),
@@ -15,7 +9,6 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () => import('./layout/shell').then((m) => m.Shell),
-    canActivate: [authGuard],
     children: [
       {
         path: 'dashboard',
