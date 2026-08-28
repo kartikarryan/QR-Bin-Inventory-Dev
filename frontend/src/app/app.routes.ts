@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+  { path: '', pathMatch: 'full', redirectTo: 'billing' },
   {
     path: 'scan/:qrToken',
     loadComponent: () => import('./features/scan/scan').then((m) => m.Scan),
@@ -11,30 +11,26 @@ export const routes: Routes = [
     loadComponent: () => import('./layout/shell').then((m) => m.Shell),
     children: [
       {
-        path: 'dashboard',
-        loadComponent: () => import('./features/dashboard/dashboard').then((m) => m.Dashboard),
+        path: 'billing',
+        loadComponent: () => import('./features/billing/billing').then((m) => m.Billing),
       },
       {
-        path: 'inventory',
-        loadComponent: () => import('./features/inventory/inventory').then((m) => m.Inventory),
+        path: 'stock',
+        loadComponent: () => import('./features/stock/stock').then((m) => m.Stock),
       },
       {
-        path: 'inventory/add',
-        loadComponent: () => import('./features/inventory/part-form/part-form').then((m) => m.PartForm),
+        path: 'products',
+        loadComponent: () => import('./features/products/products').then((m) => m.Products),
       },
       {
-        path: 'inventory/:id',
-        loadComponent: () => import('./features/inventory/part-details/part-details').then((m) => m.PartDetails),
+        path: 'bills',
+        loadComponent: () => import('./features/bills/bill-history/bill-history').then((m) => m.BillHistory),
       },
       {
-        path: 'inventory/:id/edit',
-        loadComponent: () => import('./features/inventory/part-form/part-form').then((m) => m.PartForm),
-      },
-      {
-        path: 'qr-labels',
-        loadComponent: () => import('./features/qr-labels/qr-labels').then((m) => m.QrLabels),
+        path: 'bills/:id',
+        loadComponent: () => import('./features/bills/bill-detail/bill-detail').then((m) => m.BillDetail),
       },
     ],
   },
-  { path: '**', redirectTo: 'dashboard' },
+  { path: '**', redirectTo: 'billing' },
 ];

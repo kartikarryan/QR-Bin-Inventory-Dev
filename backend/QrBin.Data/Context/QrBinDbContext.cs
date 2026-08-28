@@ -15,6 +15,10 @@ public class QrBinDbContext : DbContext
     public DbSet<Bin> Bins => Set<Bin>();
     public DbSet<Part> Parts => Set<Part>();
     public DbSet<StockTransaction> StockTransactions => Set<StockTransaction>();
+    public DbSet<Product> Products => Set<Product>();
+    public DbSet<StockMovement> StockMovements => Set<StockMovement>();
+    public DbSet<Bill> Bills => Set<Bill>();
+    public DbSet<BillItem> BillItems => Set<BillItem>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
