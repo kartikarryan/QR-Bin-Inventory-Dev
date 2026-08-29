@@ -24,6 +24,11 @@
   overflow-x: auto;
 }
 
+.total-amount {
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
 .action-col {
   width: 1%;
   white-space: nowrap;

@@ -145,17 +145,25 @@
   gap: 0.5rem;
 }
 
-/* A small neutral pill instead of bare muted text — "returned" spelled out so it
-   can't be mistaken for a second quantity column. */
+/* A bold solid pill instead of bare muted text — "returned" spelled out so it can't
+   be mistaken for a second quantity column, colored to match the same status-chip
+   language used for stock on the Products table and Billing screen. */
 .returned-badge {
   display: inline-block;
   padding: 0.2rem 0.5rem;
   border-radius: var(--radius-sm);
-  background: var(--color-surface-sunken);
-  color: var(--color-text-muted);
+  background: var(--color-warning);
+  color: var(--color-accent-contrast);
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
   white-space: nowrap;
+}
+
+/* The running numbers that build up to the total — bold and accent-colored so the
+   money column reads clearly at a glance down the table. */
+.line-total {
+  font-weight: 700;
+  color: var(--color-accent);
 }
 
 .returns-title {
@@ -196,12 +204,12 @@
   height: 2rem;
   flex-shrink: 0;
   border-radius: var(--radius-md);
-  background: var(--color-surface-sunken);
-  color: var(--color-text-muted);
+  background: var(--color-warning);
+  color: var(--color-accent-contrast);
 
   &.exchange {
-    background: var(--color-accent-soft);
-    color: var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-accent-contrast);
   }
 }
 
@@ -220,11 +228,19 @@
 }
 
 .return-type {
-  font-size: 0.72rem;
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-sm);
+  background: var(--color-warning);
+  color: var(--color-accent-contrast);
+  font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--color-text);
+
+  &.exchange {
+    background: var(--color-accent);
+  }
 }
 
 .return-date {

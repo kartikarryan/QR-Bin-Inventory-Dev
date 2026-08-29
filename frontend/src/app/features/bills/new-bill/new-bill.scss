@@ -127,16 +127,28 @@
   color: var(--color-text);
 }
 
+/* A tinted chip, not plain text — gives the stock line its own visual weight so it
+   reads as a distinct data point under the product name rather than a second line
+   of the same paragraph. */
 .product-note {
-  font-size: 0.78rem;
-  font-weight: 600;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1rem 0.5rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: var(--color-success);
+  color: var(--color-accent-contrast);
 
   &.low {
-    color: var(--color-warning);
+    background: var(--color-warning);
+    color: var(--color-accent-contrast);
   }
 
   &.out {
-    color: var(--color-danger);
+    background: var(--color-danger);
+    color: var(--color-accent-contrast);
   }
 }
 

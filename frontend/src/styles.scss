@@ -394,41 +394,37 @@ thead tr:first-child th:last-child {
 
 /* Stock/status indicator — a small semantic dot beside high-contrast dark text, not a
    colored background fill. Scannable at a glance without coloring large table areas. */
+/* A solid status chip, not a dot + plain text — the same bold-color language as the
+   Billing screen's stock chip, so stock status reads as one consistent signal app-wide. */
 .stock-indicator {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
   font-weight: 700;
-  color: var(--color-text);
+  background: var(--color-success);
+  color: var(--color-accent-contrast);
 
-  &::before {
-    content: '';
-    width: 0.5rem;
-    height: 0.5rem;
-    flex-shrink: 0;
-    border-radius: 50%;
-    background: var(--color-success);
-  }
-
-  &.warning::before {
+  &.warning {
     background: var(--color-warning);
   }
 
-  &.danger::before {
+  &.danger {
     background: var(--color-danger);
   }
 }
 
-/* Small neutral data badge (e.g. GST rate) — same tint for every value; the color isn't
-   meant to distinguish rates, just to read as a compact chip rather than bare text. */
+/* Small data badge (e.g. GST rate) — solid accent fill, bold like the other status
+   chips, rather than a faint tint reading as bare text with a hint of color. */
 .badge-neutral {
   display: inline-block;
   padding: 0.15rem 0.5rem;
   border-radius: var(--radius-sm);
-  background: var(--color-accent-soft);
-  color: color-mix(in srgb, var(--color-accent) 70%, var(--color-text));
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
   font-size: 0.8rem;
-  font-weight: 600;
+  font-weight: 700;
   white-space: nowrap;
 }
 

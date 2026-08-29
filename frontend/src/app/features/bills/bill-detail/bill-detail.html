@@ -43,7 +43,7 @@
                     <td>{{ item.productName }}</td>
                     <td class="text-right">{{ item.quantity }}</td>
                     <td class="text-right">₹{{ item.unitPrice.toFixed(2) }}</td>
-                    <td class="text-right">₹{{ item.lineTotal.toFixed(2) }}</td>
+                    <td class="text-right"><span class="line-total">₹{{ item.lineTotal.toFixed(2) }}</span></td>
                     <td class="action-col">
                       <div class="action-cell">
                         @if (item.returnedQuantity > 0) {
@@ -90,7 +90,7 @@
 
                   <div class="return-content">
                     <div class="return-headline">
-                      <span class="return-type">{{ r.replacementProductId ? 'Exchange' : 'Return' }}</span>
+                      <span class="return-type" [class.exchange]="r.replacementProductId">{{ r.replacementProductId ? 'Exchange' : 'Return' }}</span>
                       <span class="return-date">{{ r.createdAt | date: 'MMM d, y, h:mm a' }}</span>
                     </div>
                     <p class="return-summary">Returned <strong>{{ r.returnedQuantity }} × {{ r.productName }}</strong></p>

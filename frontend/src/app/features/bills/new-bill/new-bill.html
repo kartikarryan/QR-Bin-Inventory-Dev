@@ -42,11 +42,13 @@
               >
                 <div class="product-info">
                   <span class="product-name">{{ product.name }}</span>
-                  @if (product.currentStock <= 0) {
-                    <span class="product-note out">Out of stock</span>
-                  } @else if (product.currentStock <= 10) {
-                    <span class="product-note low">Only {{ product.currentStock }} left</span>
-                  }
+                  <span class="product-note" [class.low]="product.currentStock > 0 && product.currentStock <= 10" [class.out]="product.currentStock <= 0">
+                    @if (product.currentStock <= 0) {
+                      Out of stock
+                    } @else {
+                      {{ product.currentStock }} {{ product.unit }} in stock
+                    }
+                  </span>
                 </div>
                 <span class="product-price">₹{{ product.sellingPrice.toFixed(2) }}</span>
               </button>
