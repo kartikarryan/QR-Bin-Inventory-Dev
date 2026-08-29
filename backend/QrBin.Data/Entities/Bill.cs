@@ -6,6 +6,12 @@ public class Bill
     public int OrganizationId { get; set; }
     public string? CustomerName { get; set; }
     public string? CustomerPhone { get; set; }
+
+    /// <summary>Sum of line totals before the discount is applied.</summary>
+    public decimal Subtotal { get; set; }
+    public decimal DiscountAmount { get; set; }
+
+    /// <summary>Subtotal minus DiscountAmount — what the customer actually paid.</summary>
     public decimal Total { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

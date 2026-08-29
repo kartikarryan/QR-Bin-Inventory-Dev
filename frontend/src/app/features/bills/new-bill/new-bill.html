@@ -85,7 +85,16 @@
 
                 <div class="qty-stepper">
                   <button type="button" [disabled]="line.quantity <= 1" (click)="changeQuantity(line.product.id, -1)" aria-label="Decrease quantity">−</button>
-                  <span class="qty-value">{{ line.quantity }}</span>
+                  <input
+                    type="number"
+                    class="qty-value"
+                    min="1"
+                    [max]="line.product.currentStock"
+                    inputmode="numeric"
+                    [ngModel]="line.quantity"
+                    (ngModelChange)="setQuantity(line.product.id, $event)"
+                    aria-label="Quantity"
+                  />
                   <button type="button" [disabled]="line.quantity >= line.product.currentStock" (click)="changeQuantity(line.product.id, 1)" aria-label="Increase quantity">+</button>
                 </div>
 
@@ -110,6 +119,31 @@
             <span>Phone</span>
             <input type="text" [ngModel]="customerPhone()" (ngModelChange)="customerPhone.set($event)" placeholder="Optional" />
           </label>
+          <label class="field">
+            <span>Discount (₹)</span>
+            <input
+              type="number"
+              min="0"
+              [max]="subtotal()"
+              inputmode="decimal"
+              [ngModel]="discountAmount()"
+              (ngModelChange)="discountAmount.set($event)"
+              placeholder="0.00"
+            />
+          </label>
+        </div>
+
+        <div class="order-breakdown">
+          <div class="order-row">
+            <span>Subtotal</span>
+            <span>₹{{ subtotal().toFixed(2) }}</span>
+          </div>
+          @if (effectiveDiscount() > 0) {
+            <div class="order-row discount">
+              <span>Discount</span>
+              <span>−₹{{ effectiveDiscount().toFixed(2) }}</span>
+            </div>
+          }
         </div>
 
         <div class="order-total">

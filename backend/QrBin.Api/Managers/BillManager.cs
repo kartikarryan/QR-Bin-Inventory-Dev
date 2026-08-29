@@ -94,12 +94,12 @@ public class BillManager : IBillManager
             CustomerPhone = string.IsNullOrWhiteSpace(request.CustomerPhone) ? null : request.CustomerPhone.Trim()
         };
 
-        decimal total = 0;
+        decimal subtotal = 0;
         foreach (var (productId, quantity) in quantities)
         {
             var product = products[productId];
             var lineTotal = product.SellingPrice * quantity;
-            total += lineTotal;
+            subtotal += lineTotal;
 
             bill.Items.Add(new BillItem
             {
@@ -127,7 +127,12 @@ public class BillManager : IBillManager
             }, cancellationToken);
         }
 
-        bill.Total = total;
+        if (request.DiscountAmount > subtotal)
+            return _response.BadRequest<BillResponse>(null, $"Discount can't be more than the subtotal of ₹{subtotal:0.00}.");
+
+        bill.Subtotal = subtotal;
+        bill.DiscountAmount = request.DiscountAmount;
+        bill.Total = subtotal - request.DiscountAmount;
 
         await _billRepository.AddAsync(bill, cancellationToken);
         await _billRepository.SaveChangesAsync(cancellationToken);
@@ -238,6 +243,8 @@ public class BillManager : IBillManager
         Id = bill.Id,
         CustomerName = bill.CustomerName,
         CustomerPhone = bill.CustomerPhone,
+        Subtotal = bill.Subtotal,
+        DiscountAmount = bill.DiscountAmount,
         Total = bill.Total,
         CreatedAt = bill.CreatedAt,
         Items = bill.Items.Select(i => new BillItemResponse

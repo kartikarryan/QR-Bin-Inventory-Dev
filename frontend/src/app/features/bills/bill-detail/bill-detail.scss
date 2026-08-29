@@ -96,6 +96,25 @@
   color: var(--color-text-muted);
 }
 
+.order-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.order-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+
+  &.discount {
+    color: var(--color-success);
+    font-weight: 600;
+  }
+}
+
 /* The one number on this page a customer actually double-checks — gets its own
    visual moment (size, brand color) instead of reading as just another row, stacked
    rather than side-by-side so it reads clearly in the narrower side card. */

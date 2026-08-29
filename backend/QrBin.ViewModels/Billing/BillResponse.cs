@@ -5,6 +5,8 @@ public class BillResponse
     public int Id { get; set; }
     public string? CustomerName { get; set; }
     public string? CustomerPhone { get; set; }
+    public decimal Subtotal { get; set; }
+    public decimal DiscountAmount { get; set; }
     public decimal Total { get; set; }
     public DateTime CreatedAt { get; set; }
     public List<BillItemResponse> Items { get; set; } = [];

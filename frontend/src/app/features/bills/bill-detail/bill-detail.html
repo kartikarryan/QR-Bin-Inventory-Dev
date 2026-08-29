@@ -124,6 +124,19 @@
             }
           </div>
 
+          @if (bill.discountAmount > 0) {
+            <div class="order-breakdown">
+              <div class="order-row">
+                <span>Subtotal</span>
+                <span>₹{{ bill.subtotal.toFixed(2) }}</span>
+              </div>
+              <div class="order-row discount">
+                <span>Discount</span>
+                <span>−₹{{ bill.discountAmount.toFixed(2) }}</span>
+              </div>
+            </div>
+          }
+
           <div class="bill-total">
             <span>Total paid</span>
             <strong>₹{{ bill.total.toFixed(2) }}</strong>

@@ -26,6 +26,8 @@ export interface Bill {
   id: number;
   customerName: string | null;
   customerPhone: string | null;
+  subtotal: number;
+  discountAmount: number;
   total: number;
   createdAt: string;
   items: BillItem[];
@@ -56,5 +58,6 @@ export interface CreateBillItemRequest {
 export interface CreateBillRequest {
   customerName: string | null;
   customerPhone: string | null;
+  discountAmount: number;
   items: CreateBillItemRequest[];
 }

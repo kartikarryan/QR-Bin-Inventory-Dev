@@ -1,7 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { ProductService } from '../../../core/services/product.service';
 import { BillService } from '../../../core/services/bill.service';
 import { ToastService } from '../../../core/services/toast.service';
@@ -22,7 +21,6 @@ export class NewBill {
   private readonly productService = inject(ProductService);
   private readonly billService = inject(BillService);
   private readonly toastService = inject(ToastService);
-  private readonly router = inject(Router);
 
   readonly products = signal<Product[]>([]);
   readonly loading = signal(true);
@@ -32,6 +30,7 @@ export class NewBill {
   readonly cart = signal<Map<number, CartLine>>(new Map());
   readonly customerName = signal('');
   readonly customerPhone = signal('');
+  readonly discountAmount = signal<number | null>(null);
   readonly submitting = signal(false);
   readonly submitError = signal<string | null>(null);
 
@@ -46,11 +45,20 @@ export class NewBill {
 
   readonly cartLines = computed(() => Array.from(this.cart().values()));
 
-  readonly total = computed(() =>
+  readonly subtotal = computed(() =>
     this.cartLines().reduce((sum, line) => sum + line.product.sellingPrice * line.quantity, 0),
   );
 
+  /** Clamped to [0, subtotal] — typing more than the subtotal just discounts it to free. */
+  readonly effectiveDiscount = computed(() => Math.max(0, Math.min(this.discountAmount() ?? 0, this.subtotal())));
+
+  readonly total = computed(() => this.subtotal() - this.effectiveDiscount());
+
   constructor() {
+    this.loadProducts();
+  }
+
+  private loadProducts(): void {
     this.productService.getAll().subscribe({
       next: (response) => {
         this.products.set(response.data ?? []);
@@ -111,6 +119,7 @@ export class NewBill {
     const request = {
       customerName: this.customerName().trim() ? this.customerName().trim() : null,
       customerPhone: this.customerPhone().trim() ? this.customerPhone().trim() : null,
+      discountAmount: this.effectiveDiscount(),
       items: this.cartLines().map((line) => ({ productId: line.product.id, quantity: line.quantity })),
     };
 
@@ -119,7 +128,8 @@ export class NewBill {
         this.submitting.set(false);
         if (response.data) {
           this.toastService.show('Bill created', 'success');
-          this.router.navigate(['/bills', response.data.id]);
+          this.resetOrder();
+          this.loadProducts();
         }
       },
       error: (error: HttpErrorResponse) => {
@@ -127,5 +137,14 @@ export class NewBill {
         this.submitError.set(error.error?.message ?? 'Unable to create this bill.');
       },
     });
+  }
+
+  /** Ready for the next customer — clears the cart/customer/discount without leaving the screen. */
+  private resetOrder(): void {
+    this.cart.set(new Map());
+    this.customerName.set('');
+    this.customerPhone.set('');
+    this.discountAmount.set(null);
+    this.searchTerm.set('');
   }
 }

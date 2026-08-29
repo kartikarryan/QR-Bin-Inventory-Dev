@@ -13,6 +13,8 @@ public class BillConfiguration : IEntityTypeConfiguration<Bill>
         builder.HasKey(b => b.Id);
         builder.Property(b => b.CustomerName).HasMaxLength(200);
         builder.Property(b => b.CustomerPhone).HasMaxLength(30);
+        builder.Property(b => b.Subtotal).HasColumnType("numeric(12,2)");
+        builder.Property(b => b.DiscountAmount).HasColumnType("numeric(12,2)");
         builder.Property(b => b.Total).HasColumnType("numeric(12,2)");
         builder.Property(b => b.CreatedAt).HasDefaultValueSql("now()");
 

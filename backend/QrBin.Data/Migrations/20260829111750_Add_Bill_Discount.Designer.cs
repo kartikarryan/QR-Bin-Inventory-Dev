@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using QrBin.Data.Context;
@@ -11,9 +12,11 @@ using QrBin.Data.Context;
 namespace QrBin.Data.Migrations
 {
     [DbContext(typeof(QrBinDbContext))]
-    partial class QrBinDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260829111750_Add_Bill_Discount")]
+    partial class Add_Bill_Discount
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

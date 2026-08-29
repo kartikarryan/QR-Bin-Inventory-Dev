@@ -4,6 +4,7 @@ public class CreateBillRequest
 {
     public string? CustomerName { get; set; }
     public string? CustomerPhone { get; set; }
+    public decimal DiscountAmount { get; set; }
     public List<CreateBillItemRequest> Items { get; set; } = [];
 }
 

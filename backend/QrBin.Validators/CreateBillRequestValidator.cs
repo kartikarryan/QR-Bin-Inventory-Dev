@@ -9,6 +9,7 @@ public class CreateBillRequestValidator : AbstractValidator<CreateBillRequest>
     {
         RuleFor(x => x.CustomerName).MaximumLength(200);
         RuleFor(x => x.CustomerPhone).MaximumLength(30);
+        RuleFor(x => x.DiscountAmount).GreaterThanOrEqualTo(0).WithMessage("Discount can't be negative.");
         RuleFor(x => x.Items).NotEmpty().WithMessage("Add at least one product before creating the bill.");
         RuleForEach(x => x.Items).ChildRules(item =>
         {

@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'products' },
+  { path: '', pathMatch: 'full', redirectTo: 'bills' },
   {
     path: 'scan/:qrToken',
     loadComponent: () => import('./features/scan/scan').then((m) => m.Scan),
@@ -31,5 +31,5 @@ export const routes: Routes = [
       },
     ],
   },
-  { path: '**', redirectTo: 'products' },
+  { path: '**', redirectTo: 'bills' },
 ];
