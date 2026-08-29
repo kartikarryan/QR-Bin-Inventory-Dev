@@ -1,10 +1,76 @@
 <div class="page">
   <div class="page-header">
-    <h1>Bill History</h1>
-    <p class="subtitle">Past bills, newest first.</p>
+    <div>
+      <h1>Bill History</h1>
+      <p class="subtitle">Past bills, newest first.</p>
+    </div>
+    <a routerLink="/bills" class="btn-primary">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19" />
+        <line x1="5" y1="12" x2="19" y2="12" />
+      </svg>
+      New Bill
+    </a>
   </div>
 
-  <div class="panel placeholder">
-    <p>Bill history is coming next.</p>
-  </div>
+  @if (loading()) {
+    <div class="panel skeleton-panel">
+      <div class="skeleton skeleton-row"></div>
+      <div class="skeleton skeleton-row"></div>
+      <div class="skeleton skeleton-row"></div>
+    </div>
+  } @else if (errorMessage()) {
+    <p class="state-message error">{{ errorMessage() }}</p>
+  } @else if (bills().length === 0) {
+    <div class="panel coming-soon pattern-dots">
+      <span class="empty-icon" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3Z" />
+          <line x1="9" y1="8" x2="15" y2="8" />
+          <line x1="9" y1="12" x2="15" y2="12" />
+        </svg>
+      </span>
+      <p class="coming-soon-title">No bills yet</p>
+      <p class="empty-subtitle">Create your first bill to see it here.</p>
+      <a routerLink="/bills" class="btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+        New Bill
+      </a>
+    </div>
+  } @else {
+    <div class="panel table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Customer</th>
+            <th class="text-right">Items</th>
+            <th class="text-right">Total</th>
+            <th class="action-col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (bill of bills(); track bill.id) {
+            <tr>
+              <td>{{ bill.createdAt | date: 'mediumDate' }}</td>
+              <td>{{ bill.customerName ?? 'Walk-in' }}</td>
+              <td class="text-right">{{ bill.itemCount }}</td>
+              <td class="text-right">₹{{ bill.total.toFixed(2) }}</td>
+              <td class="action-col">
+                <a class="icon-btn" [routerLink]="['/bills', bill.id]" title="View" [attr.aria-label]="'View bill ' + bill.id">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
 </div>

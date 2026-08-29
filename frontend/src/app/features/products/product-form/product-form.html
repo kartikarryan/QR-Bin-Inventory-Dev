@@ -1,0 +1,136 @@
+<div class="sheet-overlay" (click)="close()">
+  <div class="sheet" (click)="$event.stopPropagation()">
+    <div class="sheet-header">
+      <div>
+        <h1>{{ isEditMode() ? 'Edit Product' : 'Add Product' }}</h1>
+        <p class="sheet-subtitle">
+          {{ isEditMode() ? 'Update product details' : 'Add a product for billing and stock tracking' }}
+        </p>
+      </div>
+      <button type="button" class="close-btn" (click)="close()" aria-label="Close">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+    </div>
+
+    @if (loading()) {
+      <div class="sheet-body">
+        <div class="skeleton skeleton-field-label"></div>
+        <div class="skeleton skeleton-field"></div>
+        <div class="skeleton skeleton-field-label"></div>
+        <div class="skeleton skeleton-field"></div>
+      </div>
+    } @else if (loadFailed()) {
+      <div class="sheet-body">
+        <p class="state-message error">{{ errorMessage() }}</p>
+      </div>
+    } @else {
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <div class="sheet-body">
+          <section class="form-section">
+            <h2>Product Details</h2>
+
+            <label class="field">
+              <span>Product Name *</span>
+              <input type="text" formControlName="name" placeholder="Enter product name" />
+              @if (form.controls.name.invalid && form.controls.name.touched) {
+                <span class="field-error">Product name is required.</span>
+              }
+            </label>
+
+            <div class="field-row">
+              <label class="field">
+                <span>Product Code</span>
+                <input type="text" formControlName="code" placeholder="Enter product code" />
+              </label>
+
+              <label class="field">
+                <span>HSN Code</span>
+                <input type="text" formControlName="hsnCode" placeholder="Enter HSN code" />
+              </label>
+            </div>
+          </section>
+
+          <section class="form-section">
+            <h2>Pricing</h2>
+
+            <div class="field-row">
+              <label class="field">
+                <span>Selling Price *</span>
+                <input type="number" class="price-input" formControlName="sellingPrice" min="0" step="0.01" inputmode="decimal" placeholder="₹ 0.00" />
+                @if (form.controls.sellingPrice.invalid && form.controls.sellingPrice.touched) {
+                  <span class="field-error">Enter a price of 0 or more.</span>
+                }
+              </label>
+
+              <label class="field">
+                <span>GST Rate</span>
+                <select formControlName="gstRate">
+                  @for (rate of gstRates; track rate) {
+                    <option [ngValue]="rate">{{ rate }}%</option>
+                  }
+                </select>
+              </label>
+            </div>
+          </section>
+
+          <section class="form-section">
+            <h2>Stock</h2>
+
+            @if (isEditMode()) {
+              <div class="field-row">
+                <label class="field">
+                  <span>Unit *</span>
+                  <select formControlName="unit">
+                    @for (unit of units; track unit) {
+                      <option [value]="unit">{{ unit }}</option>
+                    }
+                  </select>
+                </label>
+
+                <div class="field">
+                  <span>Current Stock</span>
+                  <div class="stock-readout">{{ currentStock() }} {{ currentUnit() }}</div>
+                </div>
+              </div>
+              <p class="field-hint">Stock changes automatically from billing or Add Stock.</p>
+            } @else {
+              <div class="field-row">
+                <label class="field">
+                  <span>Unit *</span>
+                  <select formControlName="unit">
+                    @for (unit of units; track unit) {
+                      <option [value]="unit">{{ unit }}</option>
+                    }
+                  </select>
+                </label>
+
+                <label class="field">
+                  <span>Opening Stock</span>
+                  <input type="number" formControlName="openingStock" min="0" inputmode="numeric" placeholder="0" />
+                  @if (form.controls.openingStock.invalid && form.controls.openingStock.touched) {
+                    <span class="field-error">Enter a quantity of 0 or more.</span>
+                  }
+                </label>
+              </div>
+              <p class="field-hint">You can add more stock later from the Products page.</p>
+            }
+          </section>
+
+          @if (errorMessage()) {
+            <div class="form-error" role="alert">{{ errorMessage() }}</div>
+          }
+        </div>
+
+        <div class="sheet-actions">
+          <button type="button" class="btn-secondary" (click)="close()">Cancel</button>
+          <button type="submit" class="btn-primary" [disabled]="submitting()">
+            {{ submitting() ? 'Saving…' : 'Save Product' }}
+          </button>
+        </div>
+      </form>
+    }
+  </div>
+</div>

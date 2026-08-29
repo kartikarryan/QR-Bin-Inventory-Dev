@@ -5,6 +5,8 @@ public class UpdateProductRequest
 {
     public string Name { get; set; } = string.Empty;
     public string? Code { get; set; }
+    public string? HsnCode { get; set; }
     public string Unit { get; set; } = "pcs";
     public decimal SellingPrice { get; set; }
+    public decimal GstRate { get; set; } = 18;
 }

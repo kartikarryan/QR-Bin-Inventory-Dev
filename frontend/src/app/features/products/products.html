@@ -1,10 +1,186 @@
 <div class="page">
   <div class="page-header">
-    <h1>Products</h1>
-    <p class="subtitle">Add and manage the products you sell.</p>
+    <div>
+      <h1>Products</h1>
+      <p class="subtitle">Manage products, pricing and available stock</p>
+    </div>
+    <button type="button" class="btn-primary" (click)="openAddForm()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19" />
+        <line x1="5" y1="12" x2="19" y2="12" />
+      </svg>
+      Add Product
+    </button>
   </div>
 
-  <div class="panel placeholder">
-    <p>Product list and the add/edit form are coming next.</p>
-  </div>
+  @if (loading()) {
+    <div class="skeleton skeleton-search"></div>
+    <div class="panel skeleton-panel">
+      <div class="skeleton skeleton-row"></div>
+      <div class="skeleton skeleton-row"></div>
+      <div class="skeleton skeleton-row"></div>
+      <div class="skeleton skeleton-row"></div>
+    </div>
+  } @else if (errorMessage()) {
+    <p class="state-message error">{{ errorMessage() }}</p>
+  } @else if (products().length === 0) {
+    <div class="panel empty-state pattern-dots">
+      <span class="empty-icon" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12.59 2.59A2 2 0 0 0 11.17 2H4a2 2 0 0 0-2 2v7.17a2 2 0 0 0 .59 1.41l8.7 8.7a2.43 2.43 0 0 0 3.42 0l6.59-6.59a2.43 2.43 0 0 0 0-3.42Z" />
+          <circle cx="7.5" cy="7.5" r="1" fill="currentColor" stroke="none" />
+        </svg>
+      </span>
+      <p class="empty-title">No products yet</p>
+      <p class="empty-subtitle">Add your first product to start billing.</p>
+      <button type="button" class="btn-primary" (click)="openAddForm()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+        Add Product
+      </button>
+    </div>
+  } @else {
+    <div class="toolbar">
+      <div class="tabs" role="tablist">
+        <button type="button" role="tab" [class.active]="activeFilter() === 'active'" (click)="activeFilter.set('active')">
+          <span class="tab-dot tab-dot-success" aria-hidden="true"></span>
+          Active <span class="count count-success">{{ activeCount() }}</span>
+        </button>
+        <button type="button" role="tab" [class.active]="activeFilter() === 'inactive'" (click)="activeFilter.set('inactive')">
+          <span class="tab-dot tab-dot-neutral" aria-hidden="true"></span>
+          Inactive <span class="count count-neutral">{{ inactiveCount() }}</span>
+        </button>
+        <button type="button" role="tab" [class.active]="activeFilter() === 'out-of-stock'" (click)="activeFilter.set('out-of-stock')">
+          <span class="tab-dot tab-dot-danger" aria-hidden="true"></span>
+          Out of Stock <span class="count count-danger">{{ outOfStockCount() }}</span>
+        </button>
+      </div>
+
+      <label class="search-field">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <input
+          type="search"
+          [ngModel]="searchTerm()"
+          (ngModelChange)="searchTerm.set($event)"
+          placeholder="Search products..."
+        />
+      </label>
+    </div>
+
+    @if (filteredProducts().length === 0) {
+      <p class="state-message">
+        @if (searchTerm()) {
+          No products match your search.
+        } @else if (activeFilter() === 'out-of-stock') {
+          No products are out of stock.
+        } @else {
+          No {{ activeFilter() }} products.
+        }
+      </p>
+    } @else {
+      <div class="panel table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>HSN</th>
+              <th>Unit</th>
+              <th class="text-right">Selling Price</th>
+              <th>GST</th>
+              <th>Current Stock</th>
+              <th class="action-col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (product of filteredProducts(); track product.id) {
+              <tr>
+                <td>
+                  <div class="td-primary">{{ product.name }}</div>
+                  @if (product.code) {
+                    <div class="product-code">{{ product.code }}</div>
+                  }
+                </td>
+                <td>{{ product.hsnCode ?? '—' }}</td>
+                <td>{{ product.unit }}</td>
+                <td class="text-right">₹{{ product.sellingPrice.toFixed(2) }}</td>
+                <td><span class="badge-neutral">{{ product.gstRate }}%</span></td>
+                <td>
+                  <span class="stock-indicator" [class]="stockClass(product.currentStock)">
+                    {{ product.currentStock }} {{ product.unit }}
+                  </span>
+                </td>
+                <td class="action-col">
+                  <div class="row-actions">
+                    <button type="button" class="btn-outline-sm" (click)="openAddStock(product)">+ Stock</button>
+
+                    <button type="button" class="icon-btn" title="Edit" [attr.aria-label]="'Edit ' + product.name" (click)="openEditForm(product)">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 20h9" />
+                        <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+                      </svg>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="icon-btn"
+                      [class.warn]="product.isActive"
+                      [class.success]="!product.isActive"
+                      [title]="product.isActive ? 'Deactivate' : 'Activate'"
+                      [attr.aria-label]="(product.isActive ? 'Deactivate ' : 'Activate ') + product.name"
+                      [disabled]="togglingIds().has(product.id)"
+                      (click)="toggleActive(product)"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18.36 6.64a9 9 0 1 1-12.73 0" />
+                        <line x1="12" y1="2" x2="12" y2="12" />
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card-list">
+        @for (product of filteredProducts(); track product.id) {
+          <div class="product-card">
+            <button type="button" class="product-card-top" (click)="openEditForm(product)">
+              <span class="product-name">{{ product.name }}</span>
+              <span class="stock-indicator" [class]="stockClass(product.currentStock)">
+                {{ product.currentStock }} {{ product.unit }}
+              </span>
+            </button>
+            <div class="product-card-meta">
+              @if (product.code) {
+                {{ product.code }} ·
+              }
+              HSN {{ product.hsnCode ?? '—' }} · ₹{{ product.sellingPrice.toFixed(2) }} · <span class="badge-neutral">{{ product.gstRate }}%</span>
+            </div>
+            <div class="product-card-actions">
+              <button type="button" class="btn-outline-sm" (click)="openAddStock(product)">+ Stock</button>
+              <button type="button" class="btn-secondary" (click)="openEditForm(product)">Edit</button>
+              <button type="button" class="btn-secondary" [disabled]="togglingIds().has(product.id)" (click)="toggleActive(product)">
+                {{ product.isActive ? 'Deactivate' : 'Activate' }}
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+
+  @if (showForm()) {
+    <app-product-form [productId]="editingProductId()" (closed)="closeForm()" (saved)="onFormSaved()" />
+  }
+
+  @if (addStockFor(); as product) {
+    <app-add-stock-dialog [product]="product" (closed)="closeAddStock()" (saved)="onStockSaved()" />
+  }
 </div>

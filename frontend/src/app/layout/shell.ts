@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 @Component({
@@ -7,14 +7,4 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
   templateUrl: './shell.html',
   styleUrl: './shell.scss',
 })
-export class Shell {
-  readonly sidebarOpen = signal(false);
-
-  toggleSidebar(): void {
-    this.sidebarOpen.update((v) => !v);
-  }
-
-  closeSidebar(): void {
-    this.sidebarOpen.set(false);
-  }
-}
+export class Shell {}

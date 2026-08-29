@@ -95,6 +95,54 @@ namespace QrBin.Data.Migrations
                     b.ToTable("BillItem", (string)null);
                 });
 
+            modelBuilder.Entity("QrBin.Data.Entities.BillReturn", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BillId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("BillItemId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<int>("OrganizationId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ReplacementProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ReplacementQuantity")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ReturnedQuantity")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BillId");
+
+                    b.HasIndex("BillItemId");
+
+                    b.HasIndex("OrganizationId");
+
+                    b.HasIndex("ReplacementProductId");
+
+                    b.ToTable("BillReturn", (string)null);
+                });
+
             modelBuilder.Entity("QrBin.Data.Entities.Bin", b =>
                 {
                     b.Property<int>("Id")
@@ -273,6 +321,20 @@ namespace QrBin.Data.Migrations
                     b.Property<int>("CurrentStock")
                         .HasColumnType("integer");
 
+                    b.Property<decimal>("GstRate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("numeric(5,2)")
+                        .HasDefaultValue(18m);
+
+                    b.Property<string>("HsnCode")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -428,6 +490,40 @@ namespace QrBin.Data.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("QrBin.Data.Entities.BillReturn", b =>
+                {
+                    b.HasOne("QrBin.Data.Entities.Bill", "Bill")
+                        .WithMany("Returns")
+                        .HasForeignKey("BillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("QrBin.Data.Entities.BillItem", "BillItem")
+                        .WithMany()
+                        .HasForeignKey("BillItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("QrBin.Data.Entities.Organization", "Organization")
+                        .WithMany()
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("QrBin.Data.Entities.Product", "ReplacementProduct")
+                        .WithMany()
+                        .HasForeignKey("ReplacementProductId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Bill");
+
+                    b.Navigation("BillItem");
+
+                    b.Navigation("Organization");
+
+                    b.Navigation("ReplacementProduct");
+                });
+
             modelBuilder.Entity("QrBin.Data.Entities.Bin", b =>
                 {
                     b.HasOne("QrBin.Data.Entities.Organization", "Organization")
@@ -535,6 +631,8 @@ namespace QrBin.Data.Migrations
             modelBuilder.Entity("QrBin.Data.Entities.Bill", b =>
                 {
                     b.Navigation("Items");
+
+                    b.Navigation("Returns");
                 });
 
             modelBuilder.Entity("QrBin.Data.Entities.Bin", b =>

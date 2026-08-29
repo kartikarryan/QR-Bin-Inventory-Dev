@@ -1,23 +1,35 @@
 :root {
-  /* Content area — warm neutral, not stark white/cool gray */
-  --color-bg: #f4f1ea;
+  /* Content area — light neutral business-app palette, 80-85% of the UI's surface
+     area, so it needs to stay calm/low-fatigue for hours of daily use. Cool-tinted
+     rather than flat gray so it rhymes with the sapphire accent below. */
+  --color-bg: #f7f8fc;
   --color-surface: #ffffff;
-  --color-surface-sunken: #ece7dd;
-  --color-border: #e3ddd0;
-  --color-text: #1c1917;
-  --color-text-muted: #78716c;
+  --color-surface-sunken: #eef0fa;
+  --color-border: #e2e6f5;
+  --color-border-strong: #c7cce8;
+  --color-text: #10131f;
+  --color-text-muted: #676c88;
 
-  /* Brand accent — strong blue, used for primary actions + QR-related actions */
-  --color-accent: #1d4ed8;
-  --color-accent-hover: #1e40af;
-  --color-accent-active: #1b3894;
+  /* Brand accent — "sapphire", a deeper/more confident blue-violet than a stock
+     blue-600, used for primary actions, focus states, nav, table emphasis. */
+  --color-accent: #3b4cf6;
+  --color-accent-hover: #2e3adb;
+  --color-accent-active: #232db8;
   --color-accent-contrast: #ffffff;
-  --color-accent-soft: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  --color-accent-soft: color-mix(in srgb, var(--color-accent) 12%, transparent);
 
-  /* Status — used sparingly and consistently */
-  --color-success: #15803d;
-  --color-warning: #b45309;
-  --color-danger: #b91c1c;
+  /* Secondary accent — warm gold, reserved for gradients/brand chrome (buttons, the
+     avatar, empty-state icon plates). Never used as a status/semantic color — it
+     sits too close to --color-warning's hue for that. */
+  --color-accent-2: #f5a524;
+  --color-accent-2-contrast: #1a1400;
+  --color-accent-2-soft: color-mix(in srgb, var(--color-accent-2) 14%, transparent);
+  --gradient-brand: linear-gradient(135deg, #3b4cf6 0%, #7b5cfa 55%, #f5a524 100%);
+
+  /* Status — small, deliberate touches only (dots/badges), never full-row or full-card fills */
+  --color-success: #15a36b;
+  --color-warning: #d97706;
+  --color-danger: #e0293a;
 
   /* Shell chrome — dark navy/charcoal, constant regardless of light/dark content theme */
   --color-shell-bg: #141726;
@@ -26,41 +38,81 @@
   --color-shell-text: #eef0f7;
   --color-shell-text-muted: #8b90ab;
   --color-shell-active-bg: color-mix(in srgb, var(--color-accent) 28%, transparent);
-  --color-avatar-bg: #7c3aed;
-  --color-avatar-text: #ffffff;
+  --color-shell-accent: #8da0ff;
 
-  /* Scale */
-  --radius-sm: 0.25rem;
-  --radius-md: 0.375rem;
-  --radius-lg: 0.5rem;
-  --shadow-sm: 0 1px 2px rgba(28, 25, 23, 0.06);
-  --shadow-md: 0 2px 8px rgba(28, 25, 23, 0.08);
-  --shadow-elevated: 0 8px 24px rgba(28, 25, 23, 0.12);
+  /* Scale — bigger, more confident corners than a default-minimal SaaS look. */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 0.875rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.75rem;
+  --radius-full: 999px;
+
+  /* Layered shadows (two stops each) read as softer/more premium than a single flat
+     drop shadow; the glow variants are for hover states on brand-colored elements. */
+  --shadow-sm:
+    0 1px 2px rgba(16, 19, 31, 0.06),
+    0 1px 1px rgba(16, 19, 31, 0.04);
+  --shadow-md:
+    0 4px 12px rgba(16, 19, 31, 0.08),
+    0 2px 4px rgba(16, 19, 31, 0.05);
+  --shadow-elevated:
+    0 20px 40px -8px rgba(16, 19, 31, 0.18),
+    0 8px 16px -4px rgba(16, 19, 31, 0.1);
+  --shadow-accent-glow: 0 8px 24px -4px color-mix(in srgb, var(--color-accent) 45%, transparent);
+  --shadow-gold-glow: 0 6px 20px -4px color-mix(in srgb, var(--color-accent-2) 45%, transparent);
+
   --transition-fast: 120ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-base: 180ms cubic-bezier(0.4, 0, 0.2, 1);
+  /* Spring/overshoot easing for entrances only (sheets, dialogs, toasts) — never
+     hover/press states, which should stay snappy on --transition-fast/-base. */
+  --transition-bounce: 320ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Display face for headings/brand moments only — body/UI text stays on Inter for
+     table density and form legibility. */
+  --font-display:
+    'Space Grotesk',
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-bg: #15130f;
-    --color-surface: #201d18;
-    --color-surface-sunken: #17140f;
-    --color-border: #332e26;
-    --color-text: #f2ede4;
-    --color-text-muted: #a39a8c;
+    --color-bg: #12141c;
+    --color-surface: #1a1d27;
+    --color-surface-sunken: #171922;
+    --color-border: #2b2f3d;
+    --color-border-strong: #3c4152;
+    --color-text: #f2f3f8;
+    --color-text-muted: #9aa0b5;
 
-    --color-accent: #4d7dff;
-    --color-accent-hover: #6b93ff;
-    --color-accent-active: #82a3ff;
+    --color-accent: #6e7bff;
+    --color-accent-hover: #8892ff;
+    --color-accent-active: #aab2ff;
     --color-accent-contrast: #ffffff;
 
-    --color-success: #4ade80;
-    --color-warning: #fbbf24;
-    --color-danger: #f87171;
+    --color-accent-2: #ffc24d;
+    --gradient-brand: linear-gradient(135deg, #6e7bff 0%, #9b8cff 55%, #ffc24d 100%);
 
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.35);
-    --shadow-elevated: 0 8px 24px rgba(0, 0, 0, 0.45);
+    --color-success: #34d399;
+    --color-warning: #fbbf24;
+    --color-danger: #fb7185;
+
+    --shadow-sm:
+      0 1px 2px rgba(0, 0, 0, 0.35),
+      0 1px 1px rgba(0, 0, 0, 0.25);
+    --shadow-md:
+      0 4px 12px rgba(0, 0, 0, 0.4),
+      0 2px 4px rgba(0, 0, 0, 0.3);
+    --shadow-elevated:
+      0 20px 40px -8px rgba(0, 0, 0, 0.55),
+      0 8px 16px -4px rgba(0, 0, 0, 0.4);
   }
 }
 
@@ -88,6 +140,364 @@ body {
     Helvetica,
     Arial,
     sans-serif;
+}
+
+/* ============================================================================
+   Shared component primitives — this file is the one stylesheet in the app
+   NOT scoped by Angular's per-component view encapsulation, so classes defined
+   here apply globally. Previously every page redefined its own .panel/.page-header/
+   table/button CSS (same class names, 4-8 near-identical copies) — that's why a
+   contrast fix to one page's table header never reached the others. These are
+   defined once, here, so every page and future page automatically matches. Pages
+   still own their own layout container (.page, max-width, etc.) since that
+   genuinely varies; what's consolidated is what was actually being copy-pasted
+   verbatim.
+   ============================================================================ */
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+
+  h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    color: var(--color-text);
+  }
+}
+
+.subtitle {
+  margin: 0.25rem 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.state-message {
+  color: var(--color-text-muted);
+
+  &.error {
+    color: var(--color-danger);
+  }
+}
+
+.panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.empty-state,
+.coming-soon {
+  position: relative;
+  padding: 2.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
+}
+
+.empty-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin-bottom: 0.25rem;
+  border-radius: var(--radius-lg);
+  background: var(--gradient-brand);
+  color: #fff;
+}
+
+.empty-title,
+.coming-soon-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.empty-subtitle {
+  margin: 0 0 0.5rem;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.btn-primary,
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font: inherit;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.btn-primary {
+  border: none;
+  background: var(--gradient-brand);
+  color: var(--color-accent-contrast);
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled):hover {
+    box-shadow: var(--shadow-accent-glow);
+  }
+
+  &:not(:disabled):active {
+    transform: translateY(1px);
+  }
+}
+
+.btn-secondary {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled):hover {
+    background: var(--color-bg);
+    box-shadow: var(--shadow-sm);
+  }
+
+  &:not(:disabled):active {
+    transform: translateY(1px);
+  }
+}
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: none;
+  border-radius: var(--radius-lg);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
+
+  &:hover:not(:disabled) {
+    background: var(--color-accent);
+    color: var(--color-accent-contrast);
+  }
+
+  &.warn {
+    background: color-mix(in srgb, var(--color-danger) 12%, transparent);
+    color: var(--color-danger);
+  }
+
+  &.warn:hover:not(:disabled) {
+    background: var(--color-danger);
+    color: #fff;
+  }
+
+  &.success {
+    background: color-mix(in srgb, var(--color-success) 12%, transparent);
+    color: var(--color-success);
+  }
+
+  &.success:hover:not(:disabled) {
+    background: var(--color-success);
+    color: #fff;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+/* Data tables — the header reads as a confident label row (tinted background, a firm
+   rule underneath) without shouting in brand color; rows separate with a single thin
+   horizontal rule — no vertical gridlines, which read as spreadsheet-generic rather
+   than product-grade. One interactive state (hover) rather than permanent striping,
+   so the table stays calm at rest and only lights up under the cursor. */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+th {
+  text-align: left;
+  color: color-mix(in srgb, var(--color-accent) 65%, var(--color-text));
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.875rem 1.25rem;
+  background: var(--color-accent-soft);
+  border-bottom: 2px solid color-mix(in srgb, var(--color-accent) 25%, var(--color-border-strong));
+}
+
+td {
+  padding: 0.875rem 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+
+tbody tr {
+  transition: background-color var(--transition-fast);
+
+  &:hover td {
+    background: var(--color-bg);
+  }
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+/* Round the header's outer corners to match the enclosing .panel so the tint doesn't
+   square off past the card's rounded corners. */
+thead tr:first-child th:first-child {
+  border-top-left-radius: var(--radius-2xl);
+}
+
+thead tr:first-child th:last-child {
+  border-top-right-radius: var(--radius-2xl);
+}
+
+/* Row-primary cell — the record's name/title, made to stand out from the rest of the row. */
+.td-primary {
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+/* Numeric column (price, quantity) — right-aligned, matching how currency/quantity is read. */
+.text-right {
+  text-align: right;
+}
+
+/* Stock/status indicator — a small semantic dot beside high-contrast dark text, not a
+   colored background fill. Scannable at a glance without coloring large table areas. */
+.stock-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 700;
+  color: var(--color-text);
+
+  &::before {
+    content: '';
+    width: 0.5rem;
+    height: 0.5rem;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--color-success);
+  }
+
+  &.warning::before {
+    background: var(--color-warning);
+  }
+
+  &.danger::before {
+    background: var(--color-danger);
+  }
+}
+
+/* Small neutral data badge (e.g. GST rate) — same tint for every value; the color isn't
+   meant to distinguish rates, just to read as a compact chip rather than bare text. */
+.badge-neutral {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-sm);
+  background: var(--color-accent-soft);
+  color: color-mix(in srgb, var(--color-accent) 70%, var(--color-text));
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Text/number form fields — excludes checkbox/radio, which keep native sizing. */
+input:not([type='checkbox']):not([type='radio']),
+select {
+  font: inherit;
+  font-size: 0.925rem;
+  font-weight: 400;
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  transition: border-color var(--transition-fast);
+
+  &::placeholder {
+    color: var(--color-text-muted);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px var(--color-accent-soft);
+  }
+
+  &.ng-invalid.ng-touched {
+    border-color: var(--color-danger);
+
+    &:focus {
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-danger) 15%, transparent);
+    }
+  }
+}
+
+select {
+  cursor: pointer;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text);
+  min-width: 0;
+}
+
+.field-error {
+  color: var(--color-danger);
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+.field-hint {
+  margin: -0.5rem 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+.form-error {
+  color: var(--color-danger);
+  background: color-mix(in srgb, var(--color-danger) 10%, transparent);
+  border-radius: var(--radius-md);
+  padding: 0.625rem 0.875rem;
+  font-size: 0.9rem;
 }
 
 /* Shimmering placeholder block for loading states — replaces bare "Loading…" text. */
@@ -118,4 +528,14 @@ body {
 .pattern-dots {
   background-image: radial-gradient(circle, var(--color-border) 1px, transparent 1px);
   background-size: 16px 16px;
+}
+
+/* Printing a bill (Bill Detail's Print button) should only print the bill itself, not the
+   app chrome around it — this is the only place that can reach the Shell's own DOM from
+   outside its component boundary. */
+@media print {
+  .app-header,
+  app-toast-tray {
+    display: none;
+  }
 }

@@ -4,7 +4,13 @@ public enum StockMovementReason
 {
     OpeningStock,
     Sale,
-    StockReceived
+    StockReceived,
+
+    /// <summary>Customer returned units of a product after the bill was paid — stock goes back up.</summary>
+    Return,
+
+    /// <summary>The replacement side of a customer exchange — stock goes down for the new product given out.</summary>
+    Exchange
 }
 
 /// <summary>Append-only audit record — one row per stock change. Powers the plain-language Stock History view.</summary>
@@ -19,7 +25,7 @@ public class StockMovement
     public int PreviousStock { get; set; }
     public int NewStock { get; set; }
 
-    /// <summary>Set only when Reason == Sale.</summary>
+    /// <summary>Set when Reason is Sale, Return, or Exchange.</summary>
     public int? BillId { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

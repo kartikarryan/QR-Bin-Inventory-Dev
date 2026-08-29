@@ -11,6 +11,7 @@ public interface IProductRepository
     Task<Product?> GetTrackedByIdAsync(int organizationId, int productId, CancellationToken cancellationToken = default);
     Task<bool> CodeExistsAsync(int organizationId, string code, int? excludeProductId, CancellationToken cancellationToken = default);
     Task<List<StockMovement>> GetStockHistoryAsync(int organizationId, int productId, CancellationToken cancellationToken = default);
+    Task<List<StockMovement>> GetAllStockMovementsAsync(int organizationId, CancellationToken cancellationToken = default);
     Task AddAsync(Product product, CancellationToken cancellationToken = default);
     Task AddStockMovementAsync(StockMovement movement, CancellationToken cancellationToken = default);
     Task SaveChangesAsync(CancellationToken cancellationToken = default);
@@ -65,6 +66,16 @@ public class ProductRepository : IProductRepository
         return await _context.StockMovements
             .AsNoTracking()
             .Where(m => m.OrganizationId == organizationId && m.ProductId == productId)
+            .OrderByDescending(m => m.CreatedAt)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<List<StockMovement>> GetAllStockMovementsAsync(int organizationId, CancellationToken cancellationToken = default)
+    {
+        return await _context.StockMovements
+            .AsNoTracking()
+            .Include(m => m.Product)
+            .Where(m => m.OrganizationId == organizationId)
             .OrderByDescending(m => m.CreatedAt)
             .ToListAsync(cancellationToken);
     }

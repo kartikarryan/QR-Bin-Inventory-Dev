@@ -15,6 +15,8 @@ public interface IProductManager
     Task<ApiResponse<ProductResponse>> UpdateAsync(int organizationId, int productId, UpdateProductRequest request, CancellationToken cancellationToken);
     Task<ApiResponse<ProductResponse>> AddStockAsync(int organizationId, int productId, AddStockRequest request, CancellationToken cancellationToken);
     Task<ApiResponse<List<StockMovementResponse>>> GetStockHistoryAsync(int organizationId, int productId, CancellationToken cancellationToken);
+    Task<ApiResponse<List<StockMovementLogResponse>>> GetAllStockMovementsAsync(int organizationId, CancellationToken cancellationToken);
+    Task<ApiResponse<ProductResponse>> SetActiveAsync(int organizationId, int productId, SetProductActiveRequest request, CancellationToken cancellationToken);
 }
 
 public class ProductManager : IProductManager
@@ -74,8 +76,10 @@ public class ProductManager : IProductManager
             OrganizationId = organizationId,
             Name = request.Name.Trim(),
             Code = code,
+            HsnCode = string.IsNullOrWhiteSpace(request.HsnCode) ? null : request.HsnCode.Trim(),
             Unit = request.Unit.Trim(),
             SellingPrice = request.SellingPrice,
+            GstRate = request.GstRate,
             CurrentStock = request.OpeningStock
         };
 
@@ -120,13 +124,29 @@ public class ProductManager : IProductManager
 
         product.Name = request.Name.Trim();
         product.Code = code;
+        product.HsnCode = string.IsNullOrWhiteSpace(request.HsnCode) ? null : request.HsnCode.Trim();
         product.Unit = request.Unit.Trim();
         product.SellingPrice = request.SellingPrice;
+        product.GstRate = request.GstRate;
         product.UpdatedAt = DateTime.UtcNow;
 
         await _productRepository.SaveChangesAsync(cancellationToken);
 
         return _response.Ok(ToResponse(product), "Product updated");
+    }
+
+    public async Task<ApiResponse<ProductResponse>> SetActiveAsync(int organizationId, int productId, SetProductActiveRequest request, CancellationToken cancellationToken)
+    {
+        var product = await _productRepository.GetTrackedByIdAsync(organizationId, productId, cancellationToken);
+        if (product is null)
+            return _response.NotFound<ProductResponse>("Product not found.");
+
+        product.IsActive = request.IsActive;
+        product.UpdatedAt = DateTime.UtcNow;
+
+        await _productRepository.SaveChangesAsync(cancellationToken);
+
+        return _response.Ok(ToResponse(product), request.IsActive ? "Product activated" : "Product deactivated");
     }
 
     public async Task<ApiResponse<ProductResponse>> AddStockAsync(int organizationId, int productId, AddStockRequest request, CancellationToken cancellationToken)
@@ -184,6 +204,23 @@ public class ProductManager : IProductManager
         }).ToList());
     }
 
+    public async Task<ApiResponse<List<StockMovementLogResponse>>> GetAllStockMovementsAsync(int organizationId, CancellationToken cancellationToken)
+    {
+        var movements = await _productRepository.GetAllStockMovementsAsync(organizationId, cancellationToken);
+
+        return _response.Ok(movements.Select(m => new StockMovementLogResponse
+        {
+            Id = m.Id,
+            ProductId = m.ProductId,
+            ProductName = m.Product.Name,
+            Reason = ReasonLabel(m.Reason),
+            QuantityDelta = m.QuantityDelta,
+            NewStock = m.NewStock,
+            BillId = m.BillId,
+            CreatedAt = m.CreatedAt
+        }).ToList());
+    }
+
     private static string ReasonLabel(StockMovementReason reason) => reason switch
     {
         StockMovementReason.OpeningStock => "Opening Stock",
@@ -197,8 +234,11 @@ public class ProductManager : IProductManager
         Id = product.Id,
         Name = product.Name,
         Code = product.Code,
+        HsnCode = product.HsnCode,
         Unit = product.Unit,
         SellingPrice = product.SellingPrice,
-        CurrentStock = product.CurrentStock
+        GstRate = product.GstRate,
+        CurrentStock = product.CurrentStock,
+        IsActive = product.IsActive
     };
 }

@@ -41,4 +41,12 @@ public class BillsController : ControllerBase
         var response = await _billManager.CreateAsync(organizationId, request, cancellationToken);
         return StatusCode(response.StatusCode, response);
     }
+
+    [HttpPost("{id:int}/returns")]
+    public async Task<IActionResult> CreateReturn(int id, [FromBody] CreateBillReturnRequest request, CancellationToken cancellationToken)
+    {
+        var organizationId = await _currentOrg.GetOrganizationIdAsync(cancellationToken);
+        var response = await _billManager.CreateReturnAsync(organizationId, id, request, cancellationToken);
+        return StatusCode(response.StatusCode, response);
+    }
 }

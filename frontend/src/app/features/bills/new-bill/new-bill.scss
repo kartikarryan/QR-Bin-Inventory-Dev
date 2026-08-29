@@ -1,0 +1,342 @@
+/* The <app-new-bill> host tag itself has no layout rules, so without this it just
+   sits inline between .content and .page — breaking the flex-fill chain and letting
+   .page grow past the viewport instead of filling it, which is what was forcing the
+   whole page (not just the inner lists) to scroll to reach the Create Bill button. */
+:host {
+  display: contents;
+}
+
+.page {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  padding: 1.25rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.skeleton-search {
+  height: 2.75rem;
+}
+
+.skeleton-panel {
+  padding: 1.25rem;
+}
+
+.skeleton-row {
+  height: 2.5rem;
+  margin-bottom: 0.75rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.billing-layout {
+  display: grid;
+  grid-template-columns: 1fr 20rem;
+  grid-template-rows: 1fr;
+  flex: 1;
+  min-height: 0;
+  gap: 1rem;
+}
+
+.picker-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  min-width: 0;
+  min-height: 0;
+}
+
+.search-field {
+  position: relative;
+  flex-shrink: 0;
+
+  .search-icon {
+    position: absolute;
+    left: 0.875rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-muted);
+    pointer-events: none;
+  }
+
+  input {
+    padding: 0.5rem 0.75rem 0.5rem 2.5rem;
+  }
+}
+
+.product-picker {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.picker-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.875rem;
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color var(--transition-fast);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:not(.out-of-stock):hover {
+    background: var(--color-surface-sunken);
+  }
+
+  /* Can't be sold right now — reads as unavailable at a glance, not just a disabled button. */
+  &.out-of-stock {
+    opacity: 0.5;
+  }
+}
+
+.picker-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.picker-meta {
+  margin-top: 0.15rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+}
+
+/* Right next to the Add button, where a cashier's eye actually lands before adding —
+   the number that matters most when scanning the list, so it gets its own weight. */
+.picker-price {
+  flex-shrink: 0;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.cart-column {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.cart-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  gap: 0.75rem;
+  padding: 1rem;
+}
+
+.cart-title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.cart-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  color: var(--color-text);
+}
+
+.cart-count {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.cart-empty {
+  flex: 1;
+  justify-content: center;
+  padding: 1.5rem 0.5rem;
+
+  .empty-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+}
+
+.cart-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.cart-line {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-bottom: 0.625rem;
+  border-bottom: 1px solid var(--color-border);
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+.cart-line-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.cart-line-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.qty-stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.125rem 0.2rem;
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.375rem;
+    height: 1.375rem;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-sunken);
+    color: var(--color-text);
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+
+    &:hover:not(:disabled) {
+      background: var(--color-accent-soft);
+      color: var(--color-accent);
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  }
+}
+
+/* Typeable, not just tappable — a cashier billing 47 units shouldn't have to click
+   + forty-seven times; the steppers stay for quick single-unit nudges.
+   Nested under .qty-stepper for the extra specificity needed to beat the global
+   input reset in styles.scss (width/padding/border on bare `input`). */
+.qty-stepper .qty-input {
+  width: 2.5rem;
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: center;
+  font-weight: 700;
+  color: var(--color-text);
+
+  &:focus {
+    outline: none;
+    box-shadow: none;
+  }
+
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  appearance: textfield;
+}
+
+.cart-line-total {
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.cart-customer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 0.25rem;
+  border-top: 1px solid var(--color-border);
+
+  input {
+    padding: 0.5rem 0.625rem;
+  }
+}
+
+/* The one number the cashier and customer both actually look at — gets its own
+   visual moment (divider, size, brand color) rather than reading as just another row. */
+.cart-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-top: 0.625rem;
+  border-top: 1px solid var(--color-border);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+
+  strong {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--color-accent);
+  }
+}
+
+.cart-panel .btn-primary {
+  padding: 0.625rem 1.25rem;
+}
+
+/* Below the two-column breakpoint, product list and cart stack instead of sitting
+   side by side — but the page still fills the viewport rather than scrolling: the
+   product list gets the flexible space (scrolls internally), the cart sizes to its
+   own content and stays pinned right below it, so the total and Create Bill button
+   are always in view without scrolling the page. */
+@media (max-width: 60rem) {
+  .billing-layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+
+  .picker-column {
+    max-width: 40rem;
+  }
+
+  .cart-panel {
+    flex: none;
+  }
+
+  .cart-lines {
+    flex: none;
+    max-height: 30vh;
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 48rem) {
+  .page {
+    padding: 1.25rem 1rem;
+  }
+}

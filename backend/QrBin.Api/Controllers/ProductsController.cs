@@ -58,11 +58,27 @@ public class ProductsController : ControllerBase
         return StatusCode(response.StatusCode, response);
     }
 
+    [HttpGet("stock-movements")]
+    public async Task<IActionResult> GetAllStockMovements(CancellationToken cancellationToken)
+    {
+        var organizationId = await _currentOrg.GetOrganizationIdAsync(cancellationToken);
+        var response = await _productManager.GetAllStockMovementsAsync(organizationId, cancellationToken);
+        return StatusCode(response.StatusCode, response);
+    }
+
     [HttpGet("{id:int}/stock-history")]
     public async Task<IActionResult> GetStockHistory(int id, CancellationToken cancellationToken)
     {
         var organizationId = await _currentOrg.GetOrganizationIdAsync(cancellationToken);
         var response = await _productManager.GetStockHistoryAsync(organizationId, id, cancellationToken);
+        return StatusCode(response.StatusCode, response);
+    }
+
+    [HttpPut("{id:int}/active")]
+    public async Task<IActionResult> SetActive(int id, [FromBody] SetProductActiveRequest request, CancellationToken cancellationToken)
+    {
+        var organizationId = await _currentOrg.GetOrganizationIdAsync(cancellationToken);
+        var response = await _productManager.SetActiveAsync(organizationId, id, request, cancellationToken);
         return StatusCode(response.StatusCode, response);
     }
 }

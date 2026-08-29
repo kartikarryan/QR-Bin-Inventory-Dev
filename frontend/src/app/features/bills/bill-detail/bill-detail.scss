@@ -9,29 +9,163 @@
 
 .back-link {
   align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.4rem 0.625rem 0.4rem 0.4rem;
+  margin-left: -0.4rem;
+  border-radius: var(--radius-md);
   color: var(--color-text-muted);
   font-size: 0.875rem;
+  font-weight: 600;
   text-decoration: none;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
 
   &:hover {
+    background: var(--color-surface-sunken);
     color: var(--color-text);
   }
 }
 
-.page-header h1 {
+.skeleton-panel {
+  padding: 1.25rem;
+}
+
+.skeleton-row {
+  height: 2.5rem;
+  margin-bottom: 0.75rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.bill-panel {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.bill-customer {
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.bill-customer-label {
+  display: block;
+  margin-bottom: 0.375rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+/* The one number on this page a customer actually double-checks — gets its own
+   visual moment (size, brand color) instead of reading as just another row. */
+.bill-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+
+  strong {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-accent);
+  }
+}
+
+.table-wrap {
+  overflow-x: auto;
+
+  /* The global `table { width: 100% }` forces the table to fit the wrapper exactly,
+     which made auto-layout squeeze the Line Total column to make room for the Return
+     button instead of letting the table (and this scroll wrapper) grow wider. A real
+     minimum width lets it overflow properly and scroll instead of columns colliding. */
+  table {
+    min-width: 30rem;
+  }
+}
+
+.action-col {
+  width: 1%;
+  white-space: nowrap;
+  text-align: right;
+}
+
+/* Flex lives on this inner wrapper, not the <td> itself — overriding a table cell's
+   display to flex knocks it out of the table's own column-layout algorithm, so it
+   stops sharing column width/alignment with the header cell above it. */
+.action-cell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.returned-note {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.returns-title {
   margin: 0;
-  font-size: 1.5rem;
+  font-family: var(--font-display);
+  font-size: 1rem;
   color: var(--color-text);
 }
 
-.panel {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+.returns-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
 }
 
-.placeholder {
-  padding: 3rem 1.5rem;
-  text-align: center;
-  color: var(--color-text-muted);
+.return-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.875rem;
+  border-bottom: 1px solid var(--color-border);
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
 }
+
+.return-date {
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+@media (max-width: 48rem) {
+  .page {
+    padding: 1.25rem 1rem;
+  }
+
+  .bill-panel {
+    padding: 1.25rem;
+  }
+}
+
+@media print {
+  .back-link,
+  .print-btn {
+    display: none;
+  }
+}
+

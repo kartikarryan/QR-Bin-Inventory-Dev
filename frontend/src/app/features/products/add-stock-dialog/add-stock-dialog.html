@@ -1,0 +1,50 @@
+<div class="dialog-overlay" (click)="close()">
+  <div class="dialog" (click)="$event.stopPropagation()">
+    <div class="dialog-header">
+      <h2>Add Stock</h2>
+      <button type="button" class="close-btn" (click)="close()" aria-label="Close">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="dialog-body">
+      <p class="product-name">{{ product().name }}</p>
+      <p class="current-stock">Current stock: <strong>{{ product().currentStock }} {{ product().unit }}</strong></p>
+
+      <label class="field">
+        <span>Quantity received *</span>
+        <input
+          type="number"
+          min="1"
+          inputmode="numeric"
+          placeholder="e.g. 30"
+          [ngModel]="quantity()"
+          (ngModelChange)="quantity.set($event)"
+        />
+      </label>
+
+      @if (newStock(); as next) {
+        <p class="preview">{{ product().currentStock }} → <strong>{{ next }} {{ product().unit }}</strong></p>
+      }
+
+      @if (errorMessage()) {
+        <div class="form-error" role="alert">{{ errorMessage() }}</div>
+      }
+    </div>
+
+    <div class="dialog-actions">
+      <button type="button" class="btn-secondary" (click)="close()">Cancel</button>
+      <button
+        type="button"
+        class="btn-primary"
+        [disabled]="!quantity() || quantity()! <= 0 || submitting()"
+        (click)="submit()"
+      >
+        {{ submitting() ? 'Adding…' : 'Add Stock' }}
+      </button>
+    </div>
+  </div>
+</div>

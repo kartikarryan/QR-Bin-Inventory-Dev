@@ -11,4 +11,5 @@ public class Bill
 
     public Organization Organization { get; set; } = null!;
     public List<BillItem> Items { get; set; } = [];
+    public List<BillReturn> Returns { get; set; } = [];
 }

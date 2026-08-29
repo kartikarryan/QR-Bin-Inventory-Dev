@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'billing' },
+  { path: '', pathMatch: 'full', redirectTo: 'products' },
   {
     path: 'scan/:qrToken',
     loadComponent: () => import('./features/scan/scan').then((m) => m.Scan),
@@ -11,19 +11,18 @@ export const routes: Routes = [
     loadComponent: () => import('./layout/shell').then((m) => m.Shell),
     children: [
       {
-        path: 'billing',
-        loadComponent: () => import('./features/billing/billing').then((m) => m.Billing),
-      },
-      {
-        path: 'stock',
-        loadComponent: () => import('./features/stock/stock').then((m) => m.Stock),
-      },
-      {
         path: 'products',
         loadComponent: () => import('./features/products/products').then((m) => m.Products),
       },
       {
+        // The billing counter is the fast path — /bills opens straight into creating a
+        // bill rather than a history list, so a user can go from "open the app" to
+        // "ringing up a customer" in one navigation.
         path: 'bills',
+        loadComponent: () => import('./features/bills/new-bill/new-bill').then((m) => m.NewBill),
+      },
+      {
+        path: 'bills/history',
         loadComponent: () => import('./features/bills/bill-history/bill-history').then((m) => m.BillHistory),
       },
       {
@@ -32,5 +31,5 @@ export const routes: Routes = [
       },
     ],
   },
-  { path: '**', redirectTo: 'billing' },
+  { path: '**', redirectTo: 'products' },
 ];

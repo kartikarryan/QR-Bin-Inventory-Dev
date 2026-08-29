@@ -1,0 +1,82 @@
+<div class="sheet-overlay" (click)="close()">
+  <div class="sheet" (click)="$event.stopPropagation()">
+    <div class="sheet-header">
+      <div>
+        <h1>Return / Exchange</h1>
+        <p class="sheet-subtitle">{{ item().productName }}</p>
+      </div>
+      <button type="button" class="close-btn" (click)="close()" aria-label="Close">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="sheet-body">
+      <p class="current-stock">
+        {{ item().quantity }} sold
+        @if (item().returnedQuantity > 0) {
+          · {{ item().returnedQuantity }} already returned
+        }
+        · <strong>{{ remaining() }}</strong> can still be returned
+      </p>
+
+      <label class="field">
+        <span>Return quantity *</span>
+        <input
+          type="number"
+          min="1"
+          [max]="remaining()"
+          inputmode="numeric"
+          [ngModel]="effectiveReturnQuantity()"
+          (ngModelChange)="returnQuantity.set($event)"
+        />
+      </label>
+
+      <label class="checkbox-field">
+        <input type="checkbox" [ngModel]="isExchange()" (ngModelChange)="isExchange.set($event)" />
+        <span>Customer is exchanging for a different product</span>
+      </label>
+
+      @if (isExchange()) {
+        <label class="field">
+          <span>Replacement product *</span>
+          <select [ngModel]="replacementProductId()" (ngModelChange)="replacementProductId.set($event)">
+            <option [ngValue]="null">Select a product…</option>
+            @for (product of replacementOptions(); track product.id) {
+              <option [ngValue]="product.id">{{ product.name }} — {{ product.currentStock }} {{ product.unit }} in stock</option>
+            }
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Replacement quantity *</span>
+          <input
+            type="number"
+            min="1"
+            inputmode="numeric"
+            [ngModel]="replacementQuantity()"
+            (ngModelChange)="replacementQuantity.set($event)"
+          />
+        </label>
+      }
+
+      <label class="field">
+        <span>Notes</span>
+        <input type="text" [ngModel]="notes()" (ngModelChange)="notes.set($event)" placeholder="Optional" />
+      </label>
+
+      @if (errorMessage()) {
+        <div class="form-error" role="alert">{{ errorMessage() }}</div>
+      }
+    </div>
+
+    <div class="sheet-actions">
+      <button type="button" class="btn-secondary" (click)="close()">Cancel</button>
+      <button type="button" class="btn-primary" [disabled]="submitting()" (click)="submit()">
+        {{ submitting() ? 'Saving…' : 'Record Return' }}
+      </button>
+    </div>
+  </div>
+</div>

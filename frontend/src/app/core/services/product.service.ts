@@ -7,7 +7,9 @@ import {
   AddStockRequest,
   CreateProductRequest,
   Product,
+  SetProductActiveRequest,
   StockMovement,
+  StockMovementLogEntry,
   UpdateProductRequest,
 } from '../models/product.model';
 
@@ -39,5 +41,13 @@ export class ProductService {
 
   getStockHistory(id: number): Observable<ApiResponse<StockMovement[]>> {
     return this.http.get<ApiResponse<StockMovement[]>>(`${environment.apiUrl}/products/${id}/stock-history`);
+  }
+
+  getStockMovementLog(): Observable<ApiResponse<StockMovementLogEntry[]>> {
+    return this.http.get<ApiResponse<StockMovementLogEntry[]>>(`${environment.apiUrl}/products/stock-movements`);
+  }
+
+  setActive(id: number, request: SetProductActiveRequest): Observable<ApiResponse<Product>> {
+    return this.http.put<ApiResponse<Product>>(`${environment.apiUrl}/products/${id}/active`, request);
   }
 }

@@ -1,9 +1,9 @@
 {
-  "name": "QR Bin Inventory",
-  "short_name": "QR Bin",
-  "description": "Scan a workshop bin's QR code to view and update its stock.",
+  "name": "Billing",
+  "short_name": "Billing",
+  "description": "Bill customers and track product stock.",
   "display": "standalone",
-  "theme_color": "#1d4ed8",
+  "theme_color": "#141726",
   "background_color": "#0a0e1a",
   "scope": "./",
   "start_url": "./",

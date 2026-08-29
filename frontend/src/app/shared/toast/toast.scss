@@ -31,11 +31,11 @@
   color: var(--color-shell-text);
   border: 1px solid var(--color-shell-border);
   border-left: 3px solid var(--color-accent);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   padding: 0.75rem 0.875rem;
   box-shadow: var(--shadow-elevated);
   font-size: 0.875rem;
-  animation: toast-in var(--transition-base);
+  animation: toast-in var(--transition-bounce);
 
   &.success {
     border-left-color: var(--color-success);

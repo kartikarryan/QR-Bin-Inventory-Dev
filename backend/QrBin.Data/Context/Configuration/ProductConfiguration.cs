@@ -13,8 +13,11 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.HasKey(p => p.Id);
         builder.Property(p => p.Name).HasMaxLength(200).IsRequired();
         builder.Property(p => p.Code).HasMaxLength(100);
+        builder.Property(p => p.HsnCode).HasMaxLength(20);
         builder.Property(p => p.Unit).HasMaxLength(20).IsRequired();
         builder.Property(p => p.SellingPrice).HasColumnType("numeric(12,2)");
+        builder.Property(p => p.GstRate).HasColumnType("numeric(5,2)").HasDefaultValue(18m);
+        builder.Property(p => p.IsActive).HasDefaultValue(true);
         builder.Property(p => p.CreatedAt).HasDefaultValueSql("now()");
         builder.Property(p => p.UpdatedAt).HasDefaultValueSql("now()");
 
