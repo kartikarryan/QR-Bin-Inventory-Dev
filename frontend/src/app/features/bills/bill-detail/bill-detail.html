@@ -21,99 +21,125 @@
         <h1>Bill #{{ bill.id }}</h1>
         <p class="subtitle">{{ bill.createdAt | date: 'medium' }} · {{ bill.items.length }} item{{ bill.items.length > 1 ? 's' : '' }}</p>
       </div>
-      <button type="button" class="btn-secondary print-btn" (click)="print()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M6 9V2h12v7" />
-          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
-          <path d="M6 14h12v8H6z" />
-        </svg>
-        Print
-      </button>
     </div>
 
-    <div class="panel bill-panel">
-      <div class="bill-customer">
-        <span class="bill-customer-label">Billed to</span>
-        @if (bill.customerName || bill.customerPhone) {
-          @if (bill.customerName) {
-            <div class="td-primary">{{ bill.customerName }}</div>
-          }
-          @if (bill.customerPhone) {
-            <div class="empty-subtitle">{{ bill.customerPhone }}</div>
-          }
-        } @else {
-          <div class="td-primary">Walk-in customer</div>
+    <div class="bill-layout">
+      <div class="bill-main">
+        <div class="panel bill-panel">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th class="text-right">Qty</th>
+                  <th class="text-right">Unit Price</th>
+                  <th class="text-right">Line Total</th>
+                  <th class="action-col">Returned</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (item of bill.items; track item.id) {
+                  <tr>
+                    <td>{{ item.productName }}</td>
+                    <td class="text-right">{{ item.quantity }}</td>
+                    <td class="text-right">₹{{ item.unitPrice.toFixed(2) }}</td>
+                    <td class="text-right">₹{{ item.lineTotal.toFixed(2) }}</td>
+                    <td class="action-col">
+                      <div class="action-cell">
+                        @if (item.returnedQuantity > 0) {
+                          <span class="returned-badge">{{ item.returnedQuantity }}/{{ item.quantity }} returned</span>
+                        }
+                        @if (item.returnedQuantity < item.quantity) {
+                          <button type="button" class="icon-btn" title="Return" [attr.aria-label]="'Return ' + item.productName" (click)="openReturn(item)">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                              <path d="M9 14 4 9l5-5" />
+                              <path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11" />
+                            </svg>
+                          </button>
+                        }
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        @if (bill.returns.length > 0) {
+          <div class="panel bill-panel">
+            <h2 class="returns-title">Returns & Exchanges</h2>
+            <div class="returns-list">
+              @for (r of bill.returns; track r.id) {
+                <div class="return-entry">
+                  <span class="return-icon" [class.exchange]="r.replacementProductId" aria-hidden="true">
+                    @if (r.replacementProductId) {
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 3 21 7l-4 4" />
+                        <path d="M3 11V9a2 2 0 0 1 2-2h16" />
+                        <path d="M7 21 3 17l4-4" />
+                        <path d="M21 13v2a2 2 0 0 1-2 2H3" />
+                      </svg>
+                    } @else {
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 14 4 9l5-5" />
+                        <path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11" />
+                      </svg>
+                    }
+                  </span>
+
+                  <div class="return-content">
+                    <div class="return-headline">
+                      <span class="return-type">{{ r.replacementProductId ? 'Exchange' : 'Return' }}</span>
+                      <span class="return-date">{{ r.createdAt | date: 'MMM d, y, h:mm a' }}</span>
+                    </div>
+                    <p class="return-summary">Returned <strong>{{ r.returnedQuantity }} × {{ r.productName }}</strong></p>
+                    @if (r.replacementProductId) {
+                      <p class="return-summary">Exchanged for <strong>{{ r.replacementQuantity }} × {{ r.replacementProductName }}</strong></p>
+                    }
+                    @if (r.notes) {
+                      <p class="return-notes">{{ r.notes }}</p>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
         }
       </div>
 
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Product</th>
-              <th class="text-right">Qty</th>
-              <th class="text-right">Unit Price</th>
-              <th class="text-right">Line Total</th>
-              <th class="action-col">Returned</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (item of bill.items; track item.id) {
-              <tr>
-                <td>{{ item.productName }}</td>
-                <td class="text-right">{{ item.quantity }}</td>
-                <td class="text-right">₹{{ item.unitPrice.toFixed(2) }}</td>
-                <td class="text-right">₹{{ item.lineTotal.toFixed(2) }}</td>
-                <td class="action-col">
-                  <div class="action-cell">
-                    @if (item.returnedQuantity > 0) {
-                      <span class="returned-note">{{ item.returnedQuantity }}/{{ item.quantity }}</span>
-                    }
-                    @if (item.returnedQuantity < item.quantity) {
-                      <button type="button" class="icon-btn" title="Return" [attr.aria-label]="'Return ' + item.productName" (click)="openReturn(item)">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <path d="M9 14 4 9l5-5" />
-                          <path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11" />
-                        </svg>
-                      </button>
-                    }
-                  </div>
-                </td>
-              </tr>
+      <div class="bill-side">
+        <div class="panel summary-panel">
+          <div class="bill-customer">
+            <span class="bill-customer-label">Billed to</span>
+            @if (bill.customerName || bill.customerPhone) {
+              @if (bill.customerName) {
+                <div class="td-primary">{{ bill.customerName }}</div>
+              }
+              @if (bill.customerPhone) {
+                <div class="empty-subtitle">{{ bill.customerPhone }}</div>
+              }
+            } @else {
+              <div class="td-primary">Walk-in customer</div>
             }
-          </tbody>
-        </table>
-      </div>
+          </div>
 
-      <div class="bill-total">
-        <span>Total paid</span>
-        <strong>₹{{ bill.total.toFixed(2) }}</strong>
-      </div>
-    </div>
+          <div class="bill-total">
+            <span>Total paid</span>
+            <strong>₹{{ bill.total.toFixed(2) }}</strong>
+          </div>
 
-    @if (bill.returns.length > 0) {
-      <div class="panel bill-panel">
-        <h2 class="returns-title">Returns & Exchanges</h2>
-        <div class="returns-list">
-          @for (r of bill.returns; track r.id) {
-            <div class="return-row">
-              <div>
-                <div class="td-primary">
-                  {{ r.returnedQuantity }} × {{ r.productName }} returned
-                  @if (r.replacementProductId) {
-                    → {{ r.replacementQuantity }} × {{ r.replacementProductName }}
-                  }
-                </div>
-                @if (r.notes) {
-                  <div class="empty-subtitle">{{ r.notes }}</div>
-                }
-              </div>
-              <div class="return-date">{{ r.createdAt | date: 'medium' }}</div>
-            </div>
-          }
+          <button type="button" class="btn-primary print-btn" (click)="print()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 9V2h12v7" />
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+              <path d="M6 14h12v8H6z" />
+            </svg>
+            Print
+          </button>
         </div>
       </div>
-    }
+    </div>
   }
 
   @if (bill(); as bill) {

@@ -1,9 +1,9 @@
-<div class="sheet-overlay" (click)="close()">
-  <div class="sheet" (click)="$event.stopPropagation()">
-    <div class="sheet-header">
+<div class="dialog-overlay" (click)="close()">
+  <div class="dialog" (click)="$event.stopPropagation()">
+    <div class="dialog-header">
       <div>
-        <h1>Return / Exchange</h1>
-        <p class="sheet-subtitle">{{ item().productName }}</p>
+        <h2>Return / Exchange</h2>
+        <p class="dialog-subtitle">{{ item().productName }}</p>
       </div>
       <button type="button" class="close-btn" (click)="close()" aria-label="Close">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -13,7 +13,7 @@
       </button>
     </div>
 
-    <div class="sheet-body">
+    <div class="dialog-body">
       <p class="current-stock">
         {{ item().quantity }} sold
         @if (item().returnedQuantity > 0) {
@@ -72,7 +72,7 @@
       }
     </div>
 
-    <div class="sheet-actions">
+    <div class="dialog-actions">
       <button type="button" class="btn-secondary" (click)="close()">Cancel</button>
       <button type="button" class="btn-primary" [disabled]="submitting()" (click)="submit()">
         {{ submitting() ? 'Saving…' : 'Record Return' }}
