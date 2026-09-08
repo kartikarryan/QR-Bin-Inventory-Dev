@@ -83,6 +83,36 @@
 
 @media (max-width: 48rem) {
   .app-header {
-    padding: 0.75rem 1rem;
+    padding: 0.625rem 0.75rem;
+  }
+
+  .header-nav {
+    justify-content: space-around;
+    width: 100%;
+    gap: 0.125rem;
+  }
+
+  .header-nav a {
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.4rem 0.5rem;
+    border-bottom: none;
+  }
+}
+
+/* Icon-only on real phone widths — three labeled tabs don't fit without wrapping,
+   and each screen's own heading already confirms where you landed. */
+@media (max-width: 26rem) {
+  .nav-label {
+    display: none;
+  }
+
+  .header-nav a {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .nav-icon svg {
+    width: 20px;
+    height: 20px;
   }
 }

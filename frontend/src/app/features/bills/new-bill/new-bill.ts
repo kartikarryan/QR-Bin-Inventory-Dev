@@ -34,6 +34,9 @@ export class NewBill {
   readonly submitting = signal(false);
   readonly submitError = signal<string | null>(null);
 
+  /** On narrow screens the order/summary live in a bottom sheet instead of a side column. */
+  readonly cartSheetOpen = signal(false);
+
   readonly filteredProducts = computed(() => {
     const term = this.searchTerm().trim().toLowerCase();
     return this.products().filter((product) => {
@@ -146,5 +149,6 @@ export class NewBill {
     this.customerPhone.set('');
     this.discountAmount.set(null);
     this.searchTerm.set('');
+    this.cartSheetOpen.set(false);
   }
 }

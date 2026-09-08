@@ -72,5 +72,20 @@
         </tbody>
       </table>
     </div>
+
+    <div class="card-list">
+      @for (bill of bills(); track bill.id) {
+        <a class="bill-card" [routerLink]="['/bills', bill.id]">
+          <div class="bill-card-top">
+            <span class="bill-card-customer">{{ bill.customerName ?? 'Walk-in' }}</span>
+            <span class="total-amount">₹{{ bill.total.toFixed(2) }}</span>
+          </div>
+          <div class="bill-card-meta">
+            <span>{{ bill.createdAt | date: 'mediumDate' }}</span>
+            <span class="badge-neutral">{{ bill.itemCount }} item{{ bill.itemCount > 1 ? 's' : '' }}</span>
+          </div>
+        </a>
+      }
+    </div>
   }
 </div>
